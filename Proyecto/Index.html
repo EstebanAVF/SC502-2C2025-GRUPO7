@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VíasSeguras - Reporte de Incidentes Viales</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+
+    <!-- Se utilizará OpenStreetMap con Leaflet.js debido a su disponiblidad -->
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    
+</head>
+<body>
+    <!-- Barra navegacion -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-road me-2"></i>VíasSeguras
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#inicio">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#mapa">Mapa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reportar">Reportar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#estadisticas">Estadísticas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="#login">Iniciar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado -->
+    <section id="inicio" class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-shield-alt me-3"></i>VíasSeguras
+                    </h1>
+                    <p class="lead mb-4">
+                        Plataforma comunitaria para reportar y conocer incidentes viales, zonas de riesgo y condiciones de tráfico en tiempo real.
+                    </p>
+                    <div class="d-grid d-md-flex gap-3 justify-content-center">
+                        <a href="#reportar" class="btn btn-danger btn-lg px-4">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Reportar Incidente
+                        </a>
+                        <a href="#mapa" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-map me-2"></i>Ver Mapa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Este bloque es como el nucleo en donde se encuentran gran parte de las secciones y funciones-->
+    <main>
+        <div class="container my-5">
+            <!-- seccion de caracteristicas -->
+            <section class="row">
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-map-marked-alt fa-3x text-primary"></i>
+                        </div>
+                        <h4>Mapa Interactivo</h4>
+                        <p class="text-muted">Visualiza incidentes viales, zonas de riesgo y condiciones de tráfico en tiempo real en tu área.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-users fa-3x text-success"></i>
+                        </div>
+                        <h4>Reportes Comunitarios</h4>
+                        <p class="text-muted">La comunidad reporta y verifica incidentes para mantener la información actualizada.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-bell fa-3x text-warning"></i>
+                        </div>
+                        <h4>Alertas Instantáneas</h4>
+                        <p class="text-muted">Recibe notificaciones sobre incidentes en tu ruta habitual y zonas de interés.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seccion para el mapa -->
+            <section id="mapa" class="my-5">
+                <h2 class="text-center text-white mb-4">
+                    <i class="fas fa-map me-2"></i>Mapa de Incidentes
+                </h2>
+                <div class="map-container">
+                    <div id="mapid" style="height: 500px; width: 100%; border-radius: 10px;"></div>
+                </div>
+            </section>
+
+            <!-- Seccion de reportes -->
+            <section id="reportar" class="my-5">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="incident-form">
+                            <h3 class="mb-4">
+                                <i class="fas fa-plus-circle me-2 text-danger"></i>Reportar Incidente
+                            </h3>
+                            <form action="process_report.php" method="POST" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="incident_type" class="form-label">Tipo de Incidente *</label>
+                                        <select class="form-select" id="incident_type" name="incident_type" required>
+                                            <option value="">Selecciona el tipo...</option>
+                                            <option value="accident">🚗 Accidente de Tráfico</option>
+                                            <option value="congestion">🚦 Congestión/Embotellamiento</option>
+                                            <option value="construction">🚧 Construcción/Obra</option>
+                                            <option value="danger_zone">⚠️ Zona Peligrosa</option>
+                                            <option value="wrong_way">↔️ Vía Mal Señalizada</option>
+                                            <option value="weather">🌧️ Condición Climática</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="severity" class="form-label">Nivel de Severidad *</label>
+                                        <select class="form-select" id="severity" name="severity" required>
+                                            <option value="">Selecciona...</option>
+                                            <option value="low">🟢 Bajo</option>
+                                            <option value="medium">🟡 Medio</option>
+                                            <option value="high">🔴 Alto</option>
+                                            <option value="critical">🚨 Crítico</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="location" class="form-label">Ubicación *</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="location" name="location" 
+                                            placeholder="Ej: Avenida Central, San José" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="get_location">
+                                            <i class="fas fa-crosshairs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Usa el botón para obtener tu ubicación actual</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Descripción del Incidente *</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" 
+                                            placeholder="Describe detalladamente lo que está ocurriendo..." required></textarea>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="photo" class="form-label">Fotografía (Opcional)</label>
+                                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                                        <div class="form-text">Ayuda con una foto del incidente</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="contact" class="form-label">Contacto (Opcional)</label>
+                                        <input type="text" class="form-control" id="contact" name="contact" 
+                                            placeholder="Teléfono o email para seguimiento">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
+                                    <label class="form-check-label" for="anonymous">
+                                        Reportar de forma anónima
+                                    </label>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-danger btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i>Enviar Reporte
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- seccion para anunciar reportes y estadisticas -->
+            <section class="my-5">
+                <h3 class="text-white mb-4">
+                    <i class="fas fa-clock me-2"></i>Reportes Recientes
+                </h3>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Estos div son los reportes, estan estos predefinidos pero deben de cambiar 
+                            en tiempo real segun lo que reporte un cliente  -->
+                        <div class="alert alert-danger alert-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="alert-heading">🚗 Accidente en Autopista General Cañas</h6>
+                                    <p class="mb-1">Colisión múltiple reportada hace 15 minutos. Tráfico lento en ambos sentidos.</p>
+                                    <small class="text-muted">Reportado por: Usuario123 - 15:30</small>
+                                </div>
+                                <span class="badge bg-danger">Alto</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning alert-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="alert-heading">🚧 Construcción en Avenida Central</h6>
+                                    <p class="mb-1">Obras de reparación de alcantarillado. Carril derecho cerrado.</p>
+                                    <small class="text-muted">Reportado por: CiudadanoActivo - 14:45</small>
+                                </div>
+                                <span class="badge bg-warning">Medio</span>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info alert-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="alert-heading">🌧️ Lluvia intensa en Cartago</h6>
+                                    <p class="mb-1">Condiciones climáticas adversas. Reducir velocidad y mantener distancia.</p>
+                                    <small class="text-muted">Reportado por: MeteoUsuario - 14:20</small>
+                                </div>
+                                <span class="badge bg-info">Bajo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Este div igual esta predefinido pero los valores deben cambiar segun registros en tiempo real  -->
+                    <div class="col-lg-4">
+                        <div class="feature-card">
+                            <h5 class="mb-3">
+                                <i class="fas fa-chart-bar me-2 text-primary"></i>Estadísticas Hoy
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-6 mb-3">
+                                    <div class="stats-counter">24</div>
+                                    <small class="text-muted">Reportes</small>
+                                </div>
+                                <div class="col-6 mb-3">
+                                    <div class="stats-counter">8</div>
+                                    <small class="text-muted">Resueltos</small>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-counter">156</div>
+                                    <small class="text-muted">Usuarios</small>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stats-counter">92%</div>
+                                    <small class="text-muted">Precisión</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Boton flotante para reportes  -->
+    <button class="btn-floating" data-bs-toggle="modal" data-bs-target="#quickReportModal" title="Reporte Rápido">
+        <i class="fas fa-plus fa-lg"></i>
+    </button>
+
+    <!-- esta ventana se abre al seleccionar el boton flotante -->
+    <div class="modal fade" id="quickReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-tachometer-alt me-2"></i>Reporte Rápido
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">¿Qué está pasando?</label>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-outline-danger">🚗 Accidente</button>
+                                <button type="button" class="btn btn-outline-warning">🚦 Embotellamiento</button>
+                                <button type="button" class="btn btn-outline-info">🚧 Construcción</button>
+                                <button type="button" class="btn btn-outline-secondary">⚠️ Zona Peligrosa</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-road me-2"></i>VíasSeguras</h5>
+                    <p class="text-muted">Construyendo carreteras más seguras a través de la colaboración comunitaria.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted">&copy; 2025 VíasSeguras. Todos los derechos reservados.</p>
+                    <div>
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts.js"></script>
+    
+    <script>
+        
+    </script>
+
+</body>
+</html>
