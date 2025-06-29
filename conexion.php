@@ -1,7 +1,7 @@
 <?php
 // Conexion a la base de datos 
 // Credenciales de la base de datos
-define('DB_HOST', 'localhost');                 
+define('DB_HOST', 'localhost');               
 define('DB_USER', 'root');             
 define('DB_PASS', 'via123');         
 define('DB_NAME', 'vias_seguras');       

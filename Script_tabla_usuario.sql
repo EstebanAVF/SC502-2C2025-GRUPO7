@@ -1,10 +1,10 @@
 -- Crear la base de datos (si no existe)
-CREATE DATABASE IF NOT EXISTS vias_seguras;
+--CREATE DATABASE IF NOT EXISTS vias_seguras;
 
 -- Usar la base de datos
-USE vias_seguras;
+--USE vias_seguras;
 
--- Crear la tabla de usuarios 
+/**-- Crear la tabla de usuarios 
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -32,4 +32,4 @@ INSERT INTO rangos_usuarios (nombre_rango, minimo_puntos, descripcion) VALUES
 ('Líder', 2500, 'Usuario que guía a otros y es un referente.');
 
 -- asignar la foreing key
-ALTER TABLE usuarios ADD FOREIGN KEY (rangos_usuarios) REFERENCES rangos_usuarios(nombre_rango);
+ALTER TABLE usuarios ADD FOREIGN KEY (rangos_usuarios) REFERENCES rangos_usuarios(nombre_rango);*/
