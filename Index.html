@@ -102,6 +102,25 @@
                                       placeholder="¿Qué está pasando en las calles?" rows="2"></textarea>
                             
                             <div class="opciones-reporte mt-3">
+                                <!-- Selectores de ubicación -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <select class="form-select form-select-sm" id="selectProvincia">
+                                            <option value="">Provincia *</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-select form-select-sm" id="selectCanton" disabled>
+                                            <option value="">Cantón *</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="form-select form-select-sm" id="selectDistrito" disabled>
+                                            <option value="">Distrito</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
                                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                                     <div class="controles-izquierda d-flex align-items-center">
                                         <label class="btn btn-sm btn-outline-secondary me-2">
@@ -132,9 +151,66 @@
                     </div>
                 </div>
 
-                <!-- Feed de reportes -->
-                <div id="feedReportes">
-                    <!-- Aqui es donde vamos a cargar el codigo php para los reportes en el backend -->
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Feed de reportes -->
+                        <div id="feedReportes">
+                            <!-- aqui es para cuando se agregen los reportes dinamicamente-->
+                        </div>
+                    </div>
+                    
+                    <!-- Panel lateral de provincias -->
+                    <div class="col-lg-4">
+                        <div class="panel-provincias">
+                            <h5 class="titulo-panel mb-3">
+                                <i class="fas fa-map-marker-alt me-2"></i>Incidentes por Provincia
+                            </h5>
+                            
+                            <div class="lista-provincias" id="listaProvincias">
+                                <!-- Las provincias se cargarán aquí -->
+                            </div>
+                            
+                            <div class="resumen-nacional mt-4">
+                                <h6 class="mb-3">Resumen Nacional</h6>
+                                <div class="estadistica-resumen">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="texto-muted">Total de incidentes hoy</span>
+                                        <span class="badge bg-primary" id="totalNacional">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="texto-muted">Provincias afectadas</span>
+                                        <span class="badge bg-warning" id="provinciasAfectadas">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="texto-muted">Nivel de alerta</span>
+                                        <span class="badge bg-success" id="nivelAlerta">Bajo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="filtros-adicionales mt-4">
+                                <h6 class="mb-3">Filtrar por tipo</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="filtroUrgente" checked>
+                                    <label class="form-check-label" for="filtroUrgente">
+                                        <span class="badge-filtro urgente">Urgente</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="filtroPrecaucion" checked>
+                                    <label class="form-check-label" for="filtroPrecaucion">
+                                        <span class="badge-filtro precaucion">Precaución</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="filtroInfo" checked>
+                                    <label class="form-check-label" for="filtroInfo">
+                                        <span class="badge-filtro info">Información</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

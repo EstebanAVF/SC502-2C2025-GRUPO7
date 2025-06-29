@@ -24,7 +24,7 @@
     --radio-borde: 12px;
 }
 
-/*ESTILOS BASE */
+/* ESTILOS BASE*/
 * {
     margin: 0;
     padding: 0;
@@ -38,7 +38,7 @@ body {
     line-height: 1.6;
 }
 
-/* BARRA DE NAVEGACIÓN */
+/*BARRA DE NAVEGACIÓN */
 .navbar {
     background-color: rgba(30, 41, 59, 0.95);
     backdrop-filter: blur(10px);
@@ -97,7 +97,7 @@ body {
     z-index: 1;
 }
 
-/*CONTENIDO PRINCIPAL */
+/*CONTENIDO PRINCIPAL*/
 .contenido-principal {
     min-height: calc(100vh - 200px);
     padding: 2rem 0;
@@ -110,7 +110,7 @@ body {
     margin-bottom: 2rem;
 }
 
-/*SECCIÓN DE REPORTES */
+/*SECCIÓN DE REPORTES*/
 .seccion-reportes {
     margin-bottom: 4rem;
 }
@@ -186,9 +186,23 @@ body {
     background-color: var(--fondo-tarjeta);
     border-color: var(--borde-color);
     color: var(--texto-principal);
-    border-radius: 20px;
+    border-radius: 8px;
     padding: 0.375rem 1rem;
-    width: auto;
+    width: 100%;
+    font-size: 0.875rem;
+}
+
+.form-select-sm:focus {
+    background-color: var(--fondo-tarjeta);
+    border-color: var(--color-primario);
+    color: var(--texto-principal);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.form-select-sm:disabled {
+    background-color: var(--fondo-secundario);
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .form-check-label {
@@ -296,6 +310,16 @@ body {
     margin-bottom: 1rem;
 }
 
+.ubicacion-reporte {
+    font-size: 0.875rem;
+    color: var(--color-info);
+    font-style: italic;
+}
+
+.ubicacion-reporte i {
+    color: var(--color-primario);
+}
+
 .acciones-reporte {
     display: flex;
     gap: 1rem;
@@ -322,7 +346,7 @@ body {
     color: var(--texto-principal);
 }
 
-/* SECCIÓN DEL MAPA */
+/*SECCIÓN DEL MAPA*/
 .seccion-mapa {
     margin-bottom: 4rem;
 }
@@ -342,7 +366,7 @@ body {
     border-radius: calc(var(--radio-borde) - 4px);
 }
 
-/*SECCIÓN DE ESTADÍSTICAS */
+/*SECCIÓN DE ESTADÍSTICAS*/
 .seccion-estadisticas {
     margin-bottom: 4rem;
 }
@@ -377,7 +401,7 @@ body {
     letter-spacing: 0.05em;
 }
 
-/*MODALES */
+/*MODALES*/
 .modal-content {
     background-color: var(--fondo-secundario);
     color: var(--texto-principal);
@@ -418,7 +442,179 @@ body {
     color: var(--texto-muted);
 }
 
-/*PIE DE PÁGINA*/
+/*PANEL DE PROVINCIAS*/
+.panel-provincias {
+    background-color: var(--fondo-secundario);
+    border-radius: var(--radio-borde);
+    padding: 1.5rem;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borde-color);
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+}
+
+.titulo-panel {
+    color: var(--texto-principal);
+    font-size: 1.125rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--borde-color);
+    padding-bottom: 0.75rem;
+}
+
+.lista-provincias {
+    margin-top: 1rem;
+}
+
+.item-provincia {
+    background-color: var(--fondo-tarjeta);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.item-provincia:hover {
+    border-color: var(--color-primario);
+    transform: translateX(4px);
+}
+
+.item-provincia.activa {
+    border-color: var(--color-primario);
+    background-color: rgba(30, 64, 175, 0.1);
+}
+
+.nombre-provincia {
+    font-weight: 600;
+    color: var(--texto-principal);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contador-incidentes {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.detalle-incidentes {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.mini-contador {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.mini-contador.urgente {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #ef4444;
+}
+
+.mini-contador.precaucion {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.mini-contador.info {
+    background-color: rgba(8, 145, 178, 0.2);
+    color: #0891b2;
+}
+
+/* Resumen Nacional */
+.resumen-nacional {
+    background-color: var(--fondo-tarjeta);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid var(--borde-color);
+}
+
+.resumen-nacional h6 {
+    color: var(--texto-principal);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.estadistica-resumen {
+    font-size: 0.875rem;
+}
+
+.texto-muted {
+    color: var(--texto-muted);
+}
+
+/*Filtros adicionales */
+.filtros-adicionales {
+    background-color: var(--fondo-tarjeta);
+    border-radius: 8px;
+    padding: 1rem;
+    border: 1px solid var(--borde-color);
+}
+
+.filtros-adicionales h6 {
+    color: var(--texto-principal);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.badge-filtro {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+.badge-filtro.urgente {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #ef4444;
+}
+
+.badge-filtro.precaucion {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.badge-filtro.info {
+    background-color: rgba(8, 145, 178, 0.2);
+    color: #0891b2;
+}
+
+/* Scrollbar personalizado para el panel */
+.panel-provincias::-webkit-scrollbar {
+    width: 6px;
+}
+
+.panel-provincias::-webkit-scrollbar-track {
+    background: var(--fondo-tarjeta);
+    border-radius: 3px;
+}
+
+.panel-provincias::-webkit-scrollbar-thumb {
+    background: var(--color-primario);
+    border-radius: 3px;
+}
+
+.panel-provincias::-webkit-scrollbar-thumb:hover {
+    background: #1d4ed8;
+}
+
+/*PIE DE PÁGINA */
 .pie-pagina {
     background-color: var(--fondo-secundario);
     color: var(--texto-secundario);
