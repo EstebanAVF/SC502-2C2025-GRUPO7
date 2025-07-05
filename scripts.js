@@ -13,7 +13,7 @@ class ViasSegurasApp {
                 lng: -84.0833, 
                 incidentes: { urgente: 0, precaucion: 0, info: 0 },
                 cantones: {
-                    'San José': ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián'],
+                    'San José': ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián', 'Rohmoser'],
                     'Escazú': ['Escazú', 'San Antonio', 'San Rafael'],
                     'Desamparados': ['Desamparados', 'San Miguel', 'San Juan de Dios', 'San Rafael Arriba', 'San Antonio', 'Frailes', 'Patarrá'],
                     'Moravia': ['San Vicente', 'San Jerónimo', 'Trinidad'],
