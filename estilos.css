@@ -36,6 +36,7 @@ body {
     background-color: var(--fondo-principal);
     color: var(--texto-principal);
     line-height: 1.6;
+    padding-top: 80px;
 }
 
 /*BARRA DE NAVEGACIÓN */

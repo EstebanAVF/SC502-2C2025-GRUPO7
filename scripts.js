@@ -1,9 +1,9 @@
-// CLASE PRINCIPAL DE LA APLICACIÓN
+// CLASE PRINCIPAL DE LA APLICACION
 class ViasSegurasApp {
     constructor() {
         this.mapa = null;
         this.reportes = [];
-        this.usuario = null;
+        this.usuario = null; 
         this.contadorReportes = 0;
         this.provinciaSeleccionada = null;
         this.marcadores = [];
@@ -97,10 +97,40 @@ class ViasSegurasApp {
                 }
             }
         };
+        // URL base parascripts PHP 
+        this.BASE_URL = 'http://localhost/Proyecto/'; 
+
+        // Referencias a elementos de la UI 
+        this.dom = {
+            // Navbar elements
+            botonLogin: document.getElementById('botonLogin'),
+            menuUsuario: document.getElementById('menuUsuario'),
+            dropdownUsuario: document.getElementById('dropdownUsuario'),
+            nombreUsuario: document.getElementById('nombreUsuario'), 
+            btnConfiguracion: document.getElementById('btnConfiguracion'),
+            btnCerrarSesion: document.getElementById('btnCerrarSesion'),
+            
+            // Forms within Modals
+            formularioLogin: document.getElementById('formularioLogin'),
+            formularioRegistro: document.getElementById('formularioRegistro'),
+
+            // Modal instances 
+            modalLogin: null, 
+            modalRegistro: null, 
+
+            // Main sections of the app
+            seccionInicio: document.getElementById('inicio'),
+            mainAppContent: document.getElementById('mainAppContent'),
+            seccionReportes: document.getElementById('reportes'),
+            seccionMapa: document.getElementById('mapa'),
+            seccionInformes: document.getElementById('informes'), 
+            seccionEstadisticas: document.getElementById('estadisticas'), 
+        };
+
         this.inicializar();
     }
 
-    // Inicialización de la aplicación
+    // Inicializacion de la aplicacion
     inicializar() {
         this.inicializarMapa();
         this.configurarEventos();
@@ -108,9 +138,12 @@ class ViasSegurasApp {
         this.cargarReportesEjemplo();
         this.actualizarEstadisticas();
         this.inicializarPanelProvincias();
+        this.cargarEstadoUsuario(); 
+        this.configurarModales(); 
+        this.mostrarSeccion('inicio'); 
     }
 
-    // CONFIGURACIÓN DEL MAPA
+    // CONFIGURACION DEL MAPA
     inicializarMapa() {
         // Inicializar el mapa centrado en Costa Rica
         this.mapa = L.map('mapaLeaflet').setView([9.7489, -83.7534], 8);
@@ -151,9 +184,9 @@ class ViasSegurasApp {
 
     obtenerIconoPorTipo(tipo) {
         const colores = {
-            urgente: '#dc2626',
-            precaucion: '#f59e0b',
-            info: '#0891b2'
+            urgente: 'var(--color-secundario)',
+            precaucion: 'var(--color-advertencia)',
+            info: 'var(--color-info)'
         };
 
         return L.divIcon({
@@ -163,11 +196,53 @@ class ViasSegurasApp {
         });
     }
 
+    // GESTION DE SECCIONES
+    mostrarSeccion(seccionId) {
+        // Ocultar todas las secciones principales
+        const allSections = document.querySelectorAll('section.seccion-hero, section.seccion-app, section.seccion-estadisticas');
+        allSections.forEach(sec => sec.classList.add('d-none'));
 
-    // CONFIGURACIÓN DE EVENTOS
+        // Ocultar/mostrar el contenedor principal de la app 
+        if (seccionId === 'inicio') {
+            this.dom.seccionInicio.classList.remove('d-none');
+            this.dom.mainAppContent.classList.add('d-none');
+            this.dom.seccionEstadisticas.classList.add('d-none');
+        } else {
+            this.dom.seccionInicio.classList.add('d-none');
+            this.dom.mainAppContent.classList.remove('d-none');
 
+            // Mostrar la secciOn especIfica dentro del mainAppContent
+            switch (seccionId) {
+                case 'reportes':
+                    this.dom.seccionReportes.classList.remove('d-none');
+                    break;
+                case 'mapa':
+                    this.dom.seccionMapa.classList.remove('d-none');
+                    // Asegurarse de invalidar el tamaño del mapa si estaba oculto
+                    if (this.mapa) this.mapa.invalidateSize();
+                    break;
+                case 'informes':
+                    this.dom.seccionInformes.classList.remove('d-none');
+                    break;
+                case 'estadisticas': 
+                    this.dom.seccionEstadisticas.classList.remove('d-none');
+                    this.dom.mainAppContent.classList.add('d-none'); 
+                    break;
+            }
+        }
+        // Actualizar el estado activo de los enlaces de la navbar
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            if (link.dataset.section === seccionId) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+
+    // CONFIGURACION DE EVENTOS
     configurarEventos() {
-        // Eventos del formulario de reporte
         document.getElementById('btnEnviarReporte').addEventListener('click', () => this.enviarReporte());
         document.getElementById('textoReporte').addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -179,32 +254,52 @@ class ViasSegurasApp {
         // Evento de imagen
         document.getElementById('inputImagen').addEventListener('change', (e) => this.previsualizarImagen(e));
 
-        // Evento de modo anónimo
+        // Evento de modo anonimo
         document.getElementById('modoAnonimo').addEventListener('change', (e) => this.cambiarModoAnonimo(e));
 
-        // Eventos de selectores de ubicación
+        // Eventos de selectores de ubicacion
         document.getElementById('selectProvincia').addEventListener('change', (e) => this.cambiarProvincia(e));
         document.getElementById('selectCanton').addEventListener('change', (e) => this.cambiarCanton(e));
 
-        // Eventos de autenticación
-        document.getElementById('formularioLogin').addEventListener('submit', (e) => this.iniciarSesion(e));
-        document.getElementById('formularioRegistro').addEventListener('submit', (e) => this.registrarUsuario(e));
-        document.getElementById('btnCerrarSesion').addEventListener('click', () => this.cerrarSesion());
+        // Eventos de autenticacion
+        if (this.dom.formularioLogin) {
+            this.dom.formularioLogin.addEventListener('submit', (e) => this.iniciarSesion(e));
+        }
+        if (this.dom.formularioRegistro) {
+            this.dom.formularioRegistro.addEventListener('submit', (e) => this.registrarUsuario(e));
+        }
+        if (this.dom.btnCerrarSesion) {
+            this.dom.btnCerrarSesion.addEventListener('click', () => this.cerrarSesion());
+        }
+        if (this.dom.btnConfiguracion) {
+            this.dom.btnConfiguracion.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.mostrarNotificacion('Funcionalidad de configuración en desarrollo...', 'info');
+            });
+        }
+        
+        // Eventos de navegacion por secciones
+        document.querySelectorAll('.navbar-nav .nav-link[data-section], .seccion-hero .btn[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = e.currentTarget.dataset.section;
+                this.mostrarSeccion(sectionId);
+            });
+        });
 
         // Eventos de filtros
         document.getElementById('filtroUrgente').addEventListener('change', () => this.aplicarFiltros());
         document.getElementById('filtroPrecaucion').addEventListener('change', () => this.aplicarFiltros());
         document.getElementById('filtroInfo').addEventListener('change', () => this.aplicarFiltros());
 
-        // Navegación suave
+        // Navegacion suave
         this.configurarNavegacionSuave();
     }
 
     configurarNavegacionSuave() {
         document.querySelectorAll('a[href^="#"]').forEach(enlace => {
             enlace.addEventListener('click', function(e) {
-                // Ignorar si es un modal
-                if (this.hasAttribute('data-bs-toggle')) return;
+                if (this.hasAttribute('data-bs-toggle') || this.hasAttribute('data-section')) return;
                 
                 e.preventDefault();
                 const destino = document.querySelector(this.getAttribute('href'));
@@ -218,9 +313,21 @@ class ViasSegurasApp {
         });
     }
 
+    // CONFIGURACION DE MODALES DE BOOTSTRAP
+    configurarModales() {
+        // Obteniendo instancias de los modales de Bootstrap
+        // Esto permite ocultarlos/mostrarlos programaticamente
+        this.dom.modalLogin = new bootstrap.Modal(document.getElementById('modalLogin'));
+        this.dom.modalRegistro = new bootstrap.Modal(document.getElementById('modalRegistro'));
+
+        // Evento para que al cerrar el modal de registro, no intente abrir el de login automaticamente si fue cerrado manualmente.
+        document.getElementById('modalRegistro').addEventListener('hidden.bs.modal', () => {
+            // No hacer nada si el cierre fue por cambio de modal (data-bs-dismiss="modal" ya maneja esto)
+            // Esto es mas para evitar que se abra el de login si el usuario cierra el de registro con el botón X
+        });
+    }
 
     // GESTIÓN DE SELECTORES DE UBICACIÓN
-
     inicializarSelectoresUbicacion() {
         const selectProvincia = document.getElementById('selectProvincia');
         
@@ -281,10 +388,16 @@ class ViasSegurasApp {
         }
     }
 
-
-    // GESTIÓN DE REPORTES
-
+    // GESTION DE REPORTES
     enviarReporte() {
+        // Asegurarse de que el usuario esté logueado para reportar, si no es anónimo
+        const esAnonimo = document.getElementById('modoAnonimo').checked;
+        if (!esAnonimo && !this.usuario) {
+            this.mostrarNotificacion('Debes iniciar sesión para enviar un reporte (o marca la opción Anónimo).', 'danger');
+            this.dom.modalLogin.show(); // Abrir el modal de login
+            return;
+        }
+
         const texto = document.getElementById('textoReporte').value.trim();
         const provincia = document.getElementById('selectProvincia').value;
         const canton = document.getElementById('selectCanton').value;
@@ -299,7 +412,6 @@ class ViasSegurasApp {
             return;
         }
 
-        const esAnonimo = document.getElementById('modoAnonimo').checked;
         const prioridad = document.getElementById('prioridadReporte').value;
         const distrito = document.getElementById('selectDistrito').value;
         const tieneImagen = document.getElementById('previewImagen').querySelector('img') !== null;
@@ -356,7 +468,7 @@ class ViasSegurasApp {
         div.className = 'item-reporte';
         div.innerHTML = `
             <div class="d-flex">
-                <div class="avatar-usuario me-3" style="${reporte.esAnonimo ? 'background: linear-gradient(135deg, #64748b, #475569);' : ''}">
+                <div class="avatar-usuario me-3" style="${reporte.esAnonimo ? 'background: linear-gradient(135deg, var(--fondo-tarjeta), var(--texto-muted));' : ''}">
                     ${reporte.esAnonimo ? '<i class="fas fa-user-secret"></i>' : reporte.autor.charAt(0).toUpperCase()}
                 </div>
                 <div class="flex-grow-1">
@@ -401,17 +513,17 @@ class ViasSegurasApp {
     }
 
     darLike(reporteId) {
+        // Lógica de like
+        // -----------------------------------------------------------QUEDA COMO PREVISTA 
         const reporte = this.reportes.find(r => r.id === reporteId);
         if (reporte) {
             reporte.likes++;
-            // Actualizar UI (en producción esto sería una actualización parcial)
-            location.reload();
+            this.mostrarNotificacion('¡Gracias por tu like!', 'info');
+           
         }
     }
 
-
-    // GESTIÓN DE IMÁGENES
-
+    // GESTION DE IMAGENES
     previsualizarImagen(evento) {
         const archivo = evento.target.files[0];
         if (archivo) {
@@ -425,74 +537,206 @@ class ViasSegurasApp {
         }
     }
 
-
-    // MODO ANÓNIMO
-
+    // MODO ANONIMO
     cambiarModoAnonimo(evento) {
         const avatar = document.getElementById('avatarUsuario');
         if (evento.target.checked) {
             avatar.innerHTML = '<i class="fas fa-user-secret"></i>';
-            avatar.style.background = 'linear-gradient(135deg, #64748b, #475569)';
+            avatar.style.background = 'linear-gradient(135deg, var(--fondo-tarjeta), var(--texto-muted))'; // Usar vars CSS
         } else {
             avatar.innerHTML = '<i class="fas fa-user"></i>';
-            avatar.style.background = 'linear-gradient(135deg, #1e40af, #0891b2)';
+            avatar.style.background = 'linear-gradient(135deg, var(--color-primario), var(--color-info))'; // Usar vars CSS
         }
     }
 
-
-    // GESTIÓN DE USUARIOS
-    iniciarSesion(evento) {
+    // GESTION DE AUTENTICACION 
+    async iniciarSesion(evento) {
         evento.preventDefault();
         const email = document.getElementById('emailLogin').value;
-        const nombre = email.split('@')[0];
-        
-        this.usuario = { nombre: nombre, email: email };
-        this.actualizarUIUsuario();
-        
-        // Cerrar modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalLogin'));
-        modal.hide();
-        
-        // Mostrar mensaje de bienvenida
-        this.mostrarNotificacion(`¡Bienvenido ${nombre}!`, 'success');
+        const password = document.getElementById('passwordLogin').value;
+
+        try {
+            const response = await fetch(this.BASE_URL + 'login.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.usuario = data.user; // Almacena el objeto completo del usuario
+                localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario)); // Guarda el objeto completo
+                this.actualizarUIUsuario();
+                this.dom.modalLogin.hide(); // Oculta el modal
+
+                this.mostrarNotificacion(`¡Bienvenido, ${this.usuario.nombre}!`, 'success');
+                this.mostrarSeccion('reportes'); // Llevar al usuario al feed de reportes
+                document.getElementById('emailLogin').value = ''; // Limpiar campos
+                document.getElementById('passwordLogin').value = '';
+            } else {
+                this.mostrarNotificacion('Error al iniciar sesión: ' + (data.message || 'Credenciales inválidas.'), 'danger');
+            }
+        } catch (error) {
+            console.error('Error de red o del servidor al iniciar sesión:', error);
+            this.mostrarNotificacion('Ocurrió un error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.', 'danger');
+        }
     }
 
-    registrarUsuario(evento) {
+    async registrarUsuario(evento) {
         evento.preventDefault();
         const nombre = document.getElementById('nombreRegistro').value;
+        const apellido = document.getElementById('apellidoRegistro').value; // Asegúrate que existe en HTML
         const email = document.getElementById('emailRegistro').value;
-        
-        this.usuario = { nombre: nombre, email: email };
-        this.actualizarUIUsuario();
-        
-        // Cerrar modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalRegistro'));
-        modal.hide();
-        
-        // Mostrar mensaje de bienvenida
-        this.mostrarNotificacion(`¡Cuenta creada exitosamente! Bienvenido ${nombre}`, 'success');
+        const password = document.getElementById('passwordRegistro').value;
+        const confirmPassword = document.getElementById('confirmPasswordRegistro').value; // Asegúrate que existe en HTML
+        const termsCheck = document.getElementById('termsCheckRegistro').checked; // Asegúrate que existe en HTML
+
+        if (password !== confirmPassword) {
+            this.mostrarNotificacion('Las contraseñas no coinciden.', 'warning');
+            return;
+        }
+        if (!termsCheck) {
+            this.mostrarNotificacion('Debes aceptar los Términos y Condiciones.', 'warning');
+            return;
+        }
+
+        try {
+            const response = await fetch(this.BASE_URL + 'registro.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ nombre, apellido, email, password }) // Enviar 'nombre' y 'apellido'
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.mostrarNotificacion(data.message + ' Ahora puedes iniciar sesión.', 'success');
+                this.dom.modalRegistro.hide();
+                this.dom.modalLogin.show(); // Abrir modal de login tras registro exitoso
+                document.getElementById('nombreRegistro').value = ''; // Limpiar campos
+                document.getElementById('apellidoRegistro').value = '';
+                document.getElementById('emailRegistro').value = '';
+                document.getElementById('passwordRegistro').value = '';
+                document.getElementById('confirmPasswordRegistro').value = '';
+                document.getElementById('termsCheckRegistro').checked = false;
+
+            } else {
+                this.mostrarNotificacion('Error al registrar: ' + (data.message || 'Hubo un problema con el registro.'), 'danger');
+            }
+        } catch (error) {
+            console.error('Error de red o del servidor al registrar:', error);
+            this.mostrarNotificacion('Ocurrió un error al intentar registrarte. Por favor, inténtalo de nuevo más tarde.', 'danger');
+        }
     }
 
-    cerrarSesion() {
-        this.usuario = null;
-        this.actualizarUIUsuario();
-        this.mostrarNotificacion('Sesión cerrada', 'info');
+    async cerrarSesion() {
+        try {
+            const response = await fetch(this.BASE_URL + 'logout.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                this.usuario = null; // Limpiar el objeto de usuario en la app
+                localStorage.removeItem('usuarioViasSeguras'); // Limpiar de localStorage
+                this.actualizarUIUsuario(); // Actualizar la UI a estado "invitado"
+                this.mostrarNotificacion(data.message, 'info');
+                this.mostrarSeccion('inicio'); // Volver a la página de inicio
+            } else {
+                this.mostrarNotificacion('Error al cerrar sesión: ' + (data.message || 'No se pudo cerrar la sesión.'), 'danger');
+            }
+        } catch (error) {
+            console.error('Error de red o del servidor al cerrar sesión:', error);
+            this.mostrarNotificacion('Ocurrió un error al intentar cerrar sesión. Por favor, inténtalo de nuevo más tarde.', 'danger');
+        }
+    }
+
+    // Cargar estado del usuario desde localStorage al iniciar la aplicacion
+    cargarEstadoUsuario() {
+        const storedUser = localStorage.getItem('usuarioViasSeguras');
+        if (storedUser) {
+            try {
+                this.usuario = JSON.parse(storedUser);
+                this.actualizarUIUsuario(); // Actualizar UI si hay un usuario guardado
+            } catch (e) {
+                console.error("Error al parsear usuario de localStorage", e);
+                localStorage.removeItem('usuarioViasSeguras'); // Limpiar dato corrupto
+                this.usuario = null;
+                this.actualizarUIUsuario();
+            }
+        } else {
+            this.usuario = null;
+            this.actualizarUIUsuario(); // Asegurar que la UI esté en modo invitado
+        }
     }
 
     actualizarUIUsuario() {
-        const botonLogin = document.getElementById('botonLogin');
-        const menuUsuario = document.getElementById('menuUsuario');
-        const nombreUsuario = document.getElementById('nombreUsuario');
-        
+        // Actualizar elementos de la barra de navegacion
         if (this.usuario) {
-            botonLogin.classList.add('d-none');
-            menuUsuario.classList.remove('d-none');
-            nombreUsuario.textContent = this.usuario.nombre;
+            this.dom.botonLogin.classList.add('d-none');
+            this.dom.menuUsuario.classList.remove('d-none');
+            this.dom.nombreUsuario.textContent = this.usuario.nombre; 
+            
+            // Actualizar panel lateral de perfil si existe
+            const nombrePerfil = document.getElementById('nombrePerfil');
+            const emailPerfil = document.getElementById('emailPerfil');
+            const puntosUsuario = document.getElementById('puntosUsuario');
+            const rangoUsuario = document.getElementById('rangoUsuario');
+            const avatarUsuario = document.getElementById('avatarUsuario'); // Avatar del formulario de reporte
+            
+            if (nombrePerfil) nombrePerfil.textContent = this.usuario.nombre + ' ' + (this.usuario.apellido || '');
+            if (emailPerfil) emailPerfil.textContent = this.usuario.email;
+            // Si la BD devuelve puntos y rango, actualizarlos aquí
+            if (puntosUsuario) puntosUsuario.textContent = this.usuario.points || 0; 
+            if (rangoUsuario) rangoUsuario.textContent = this.usuario.user_rank || 'Novato'; 
+
+            // Actualizar avatar del formulario de reporte
+            if (avatarUsuario) {
+                avatarUsuario.innerHTML = this.usuario.nombre.charAt(0).toUpperCase();
+                avatarUsuario.style.background = 'linear-gradient(135deg, var(--color-primario), var(--color-info))';
+            }
+
+            // Si el modo anónimo está marcado al iniciar sesión, desmarcarlo
+            const modoAnonimoCheckbox = document.getElementById('modoAnonimo');
+            if (modoAnonimoCheckbox && modoAnonimoCheckbox.checked) {
+                modoAnonimoCheckbox.checked = false;
+                this.cambiarModoAnonimo({ target: modoAnonimoCheckbox }); // Llama a la función para actualizar avatar
+            }
+
         } else {
-            botonLogin.classList.remove('d-none');
-            menuUsuario.classList.add('d-none');
+            this.dom.botonLogin.classList.remove('d-none');
+            this.dom.menuUsuario.classList.add('d-none');
+            this.dom.nombreUsuario.textContent = 'Usuario'; // Restablece texto por defecto
+            
+            // Restablecer panel lateral de perfil
+            const nombrePerfil = document.getElementById('nombrePerfil');
+            const emailPerfil = document.getElementById('emailPerfil');
+            const puntosUsuario = document.getElementById('puntosUsuario');
+            const rangoUsuario = document.getElementById('rangoUsuario');
+            const avatarUsuario = document.getElementById('avatarUsuario');
+
+            if (nombrePerfil) nombrePerfil.textContent = 'Invitado';
+            if (emailPerfil) emailPerfil.textContent = 'Inicia sesión para ver tu perfil';
+            if (puntosUsuario) puntosUsuario.textContent = '0';
+            if (rangoUsuario) rangoUsuario.textContent = 'Novato';
+
+            // Restablecer avatar del formulario de reporte
+            if (avatarUsuario) {
+                avatarUsuario.innerHTML = '<i class="fas fa-user"></i>';
+                avatarUsuario.style.background = 'linear-gradient(135deg, var(--color-primario), var(--color-info))';
+            }
         }
     }
+
 
     // UTILIDADES
     limpiarFormulario() {
@@ -513,15 +757,15 @@ class ViasSegurasApp {
         // Resetear el avatar
         const avatar = document.getElementById('avatarUsuario');
         avatar.innerHTML = '<i class="fas fa-user"></i>';
-        avatar.style.background = 'linear-gradient(135deg, #1e40af, #0891b2)';
+        avatar.style.background = 'linear-gradient(135deg, var(--color-primario), var(--color-info))';
     }
 
     mostrarNotificacion(mensaje, tipo = 'info') {
         const colores = {
-            success: '#16a34a',
-            info: '#0891b2',
-            warning: '#f59e0b',
-            danger: '#dc2626'
+            success: 'var(--color-exito)',
+            info: 'var(--color-info)',
+            warning: 'var(--color-advertencia)',
+            danger: 'var(--color-secundario)'
         };
 
         const notificacion = document.createElement('div');
@@ -530,19 +774,19 @@ class ViasSegurasApp {
             top: 80px;
             right: 20px;
             background-color: ${colores[tipo]};
-            color: white;
+            color: var(--texto-principal); /* Usar variable para el color de texto */
             padding: 1rem 1.5rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 9999;
-            animation: slideIn 0.3s ease-out;
+            animation: slideIn 0.3s ease-out forwards; /* Añadir forwards para que mantenga el estado final */
         `;
         notificacion.textContent = mensaje;
         
         document.body.appendChild(notificacion);
         
         setTimeout(() => {
-            notificacion.style.animation = 'slideOut 0.3s ease-out';
+            notificacion.style.animation = 'slideOut 0.3s ease-out forwards'; // Añadir forwards
             setTimeout(() => notificacion.remove(), 300);
         }, 3000);
     }
@@ -551,8 +795,8 @@ class ViasSegurasApp {
         document.getElementById('totalReportes').textContent = this.contadorReportes;
         document.getElementById('reportesResueltos').textContent = Math.floor(this.contadorReportes * 0.3);
         document.getElementById('usuariosActivos').textContent = Math.floor(Math.random() * 50) + 100;
+        // Podrías añadir lógica para actualizar las estadísticas de la sección 'informes' aquí
     }
-
 
     // PANEL DE PROVINCIAS
     inicializarPanelProvincias() {
@@ -616,30 +860,35 @@ class ViasSegurasApp {
         this.actualizarPanelProvincias();
         
         if (this.provinciaSeleccionada) {
-            // Centrar mapa en la provincia seleccionada
             const coords = this.datosProvincias[provincia];
             this.mapa.setView([coords.lat, coords.lng], 10);
-            
-            // Filtrar reportes por provincia
             this.filtrarReportesPorProvincia(provincia);
         } else {
-            // Volver a vista general
             this.mapa.setView([9.7489, -83.7534], 8);
             this.mostrarTodosLosReportes();
         }
     }
 
     filtrarReportesPorProvincia(provincia) {
-        const reportes = document.querySelectorAll('.item-reporte');
-        reportes.forEach(reporte => {
-            // En producción, esto verificaría la provincia del reporte
-            reporte.style.display = 'block';
+        this.marcadores.forEach(({ marcador, provincia: markerProvincia }) => {
+            if (markerProvincia === provincia) {
+                marcador.setOpacity(1);
+            } else {
+                marcador.setOpacity(0);
+            }
+        });
+
+        document.querySelectorAll('.item-reporte').forEach(reporteElement => {
+            // Este filtro en el feed de reportes requeriría que los reportes tengan el dato de provincia
+            // para ser consistente. Por ahora, asume que 'reporteElement' tiene un data-attribute o similar
+            // Por simplicidad, aquí puedes controlar la visibilidad o dejarlo abierto
+            reporteElement.style.display = 'block'; // Ocultar/mostrar según la provincia real
         });
     }
 
     mostrarTodosLosReportes() {
-        const reportes = document.querySelectorAll('.item-reporte');
-        reportes.forEach(reporte => {
+        this.marcadores.forEach(({ marcador }) => marcador.setOpacity(1));
+        document.querySelectorAll('.item-reporte').forEach(reporte => {
             reporte.style.display = 'block';
         });
     }
@@ -649,7 +898,6 @@ class ViasSegurasApp {
         const filtroPrecaucion = document.getElementById('filtroPrecaucion').checked;
         const filtroInfo = document.getElementById('filtroInfo').checked;
         
-        // Filtrar marcadores en el mapa
         this.marcadores.forEach(({ marcador, tipo }) => {
             const mostrar = (tipo === 'urgente' && filtroUrgente) ||
                            (tipo === 'precaucion' && filtroPrecaucion) ||
@@ -662,7 +910,6 @@ class ViasSegurasApp {
             }
         });
         
-        // Filtrar reportes en el feed
         const reportes = document.querySelectorAll('.item-reporte');
         reportes.forEach(reporte => {
             const prioridad = reporte.querySelector('.etiqueta-prioridad').classList;
@@ -675,7 +922,6 @@ class ViasSegurasApp {
     }
 
     // DATOS DE EJEMPLO
- 
     cargarReportesEjemplo() {
         const reportesEjemplo = [
             {
@@ -687,7 +933,8 @@ class ViasSegurasApp {
                 tiempo: 'hace 15 minutos',
                 likes: 12,
                 comentarios: 3,
-                imagen: null
+                imagen: null,
+                provincia: 'San José', canton: 'San José' // Añadir provincia y cantón
             },
             {
                 id: 2,
@@ -698,7 +945,8 @@ class ViasSegurasApp {
                 tiempo: 'hace 45 minutos',
                 likes: 8,
                 comentarios: 5,
-                imagen: null
+                imagen: null,
+                provincia: 'Alajuela', canton: 'Alajuela' // Añadir provincia y canton
             },
             {
                 id: 3,
@@ -709,7 +957,8 @@ class ViasSegurasApp {
                 tiempo: 'hace 1 hora',
                 likes: 15,
                 comentarios: 2,
-                imagen: null
+                imagen: null,
+                provincia: 'Cartago', canton: 'Cartago' // Añadir provincia y canton
             }
         ];
 
@@ -743,7 +992,7 @@ class ViasSegurasApp {
 }
 
 
-// ANIMACIONES CSS
+// ANIMACIONES CSS (Mantenidas aquí, aunque podrían ir en estilos.css si son usadas globalmente)
 const estilosAnimacion = document.createElement('style');
 estilosAnimacion.textContent = `
     @keyframes slideIn {
