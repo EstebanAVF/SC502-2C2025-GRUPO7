@@ -1,4 +1,5 @@
 <?php
+require_once 'conexion.php';
 
 // Estas cabeceras son cruciales para que la comunicación entre JavaScript y PHP funcione
 header('Content-Type: application/json');                                   // Avisa al navegador que la respuesta de este script siempre será en formato JSON.
@@ -15,8 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-
-session_start(); // Inicia la sesion
 
 // Destruir todas las variables de sesion
 $_SESSION = array();

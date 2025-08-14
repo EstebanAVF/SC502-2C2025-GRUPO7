@@ -32,9 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Incluir el archivo de conexion a la base de datos
 require_once 'conexion.php';
 
-// Iniciar sesión PHP
-session_start();
-
 // Obtener los datos JSON de la solicitud
 $input = file_get_contents('php://input');      // Lee el cuerpo de la peticion que contiene los datos JSON enviados desde JavaScript
 $data = json_decode($input, true);              // Convierte el texto JSON en un array asociativo de PHP

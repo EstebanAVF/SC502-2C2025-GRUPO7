@@ -1,4 +1,6 @@
 <?php
+require_once 'conexion.php';
+
 // Muestra los errores de PHP en la respuesta esencial para la etapa de desarrollo para saber donde pueden estar los errores
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -30,11 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Incluir el archivo de conexion a la base de datos
 require_once 'conexion.php';
-
-// Iniciar sesión PHP
-// Esto permite al servidor "recordar" a un usuario a traves de diferentes paginas o peticiones
-// usando la superglobal $_SESSION.
-session_start();
 
 
 // Obtener los datos JSON de la solicitud
