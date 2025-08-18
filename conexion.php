@@ -1,35 +1,85 @@
 <?php
-// 1. INICIAR LA SESIÓN PRIMERO QUE NADA
-// Esto previene el error "headers already sent".
-session_start();
+// conexion.php - Configuración de base de datos para Vías Seguras
 
-// 2. MOSTRAR ERRORES (SOLO PARA DESARROLLO)
-// Nos ayuda a ver cualquier problema directamente.
+// Configuración para mostrar errores (solo en desarrollo)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// 3. CREDENCIALES DE LA BASE DE DATOS
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-// Usamos una contraseña vacía, que es el estándar para la mayoría de servidores locales como XAMPP.
-define('DB_PASS', 'EAVF4444'); 
-define('DB_NAME', 'vias_seguras');
+// Configuración de la base de datos
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "vias_seguras";
 
-// 4. INTENTAR LA CONEXIÓN
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-// 5. VERIFICAR LA CONEXIÓN
-// Si la conexión falla, el script se detiene aquí y muestra un error claro en JSON.
-if ($conn->connect_error) {
-    http_response_code(500); // Internal Server Error
-    // Enviamos un error en JSON, que JavaScript SÍ puede entender.
-    echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos: ' . $conn->connect_error]);
-    exit(); // Detener el script si la conexión falla
+// Crear conexión
+try {
+    $conn = new mysqli($host, $username, $password, $database);
+    
+    // Verificar conexión
+    if ($conn->connect_error) {
+        throw new Exception("Error de conexión: " . $conn->connect_error);
+    }
+    
+    // Establecer charset UTF-8
+    if (!$conn->set_charset("utf8mb4")) {
+        throw new Exception("Error estableciendo charset: " . $conn->error);
+    }
+    
+    // Log de éxito (solo para debug)
+    error_log("Conexión a BD exitosa - " . date('Y-m-d H:i:s'));
+    
+} catch (Exception $e) {
+    // Log del error
+    error_log("Error de conexión a BD: " . $e->getMessage());
+    
+    // Solo mostrar error detallado en desarrollo
+    if ($_SERVER['HTTP_HOST'] === 'localhost' || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) {
+        die("Error de conexión: " . $e->getMessage());
+    } else {
+        die("Error de conexión a la base de datos. Contacte al administrador.");
+    }
 }
 
-// 6. ESTABLECER JUEGO DE CARACTERES
-// Buena práctica para evitar problemas con tildes y caracteres especiales.
-$conn->set_charset("utf8mb4");
+// Función helper para prepared statements seguros
+function ejecutarQuery($conn, $sql, $tipos = "", $valores = []) {
+    try {
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Error preparando consulta: " . $conn->error);
+        }
+        
+        if (!empty($tipos) && !empty($valores)) {
+            $stmt->bind_param($tipos, ...$valores);
+        }
+        
+        if (!$stmt->execute()) {
+            throw new Exception("Error ejecutando consulta: " . $stmt->error);
+        }
+        
+        return $stmt;
+    } catch (Exception $e) {
+        error_log("Error en ejecutarQuery: " . $e->getMessage());
+        throw $e;
+    }
+}
 
+// Función para respuestas JSON consistentes
+function respuestaJSON($success, $message, $data = null, $codigo_http = 200) {
+    http_response_code($codigo_http);
+    
+    $respuesta = [
+        'success' => $success,
+        'message' => $message,
+        'timestamp' => date('Y-m-d H:i:s')
+    ];
+    
+    if ($data !== null) {
+        $respuesta['data'] = $data;
+    }
+    
+    header('Content-Type: application/json');
+    echo json_encode($respuesta, JSON_UNESCAPED_UNICODE);
+    exit();
+}
 ?>

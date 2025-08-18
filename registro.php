@@ -1,29 +1,28 @@
 <?php
+// Iniciar sesión al principio
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-// Muestra los errores de PHP en la respuesta esencial para la etapa de desarrollo para saber donde pueden estar los errores
+// Muestra los errores de PHP en la respuesta esencial para la etapa de desarrollo
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-// Reporta todos los tipos de errores de PHP.
 error_reporting(E_ALL);
 
 // Estas cabeceras son cruciales para que la comunicación entre JavaScript y PHP funcione
-header('Content-Type: application/json');                                   // Avisa al navegador que la respuesta de este script siempre será en formato JSON.
-header('Access-Control-Allow-Origin: *');                                   // Para desarrollo. En produccion, usa tu dominio real.
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');                 // Define los métodos que este script acepta
-header('Access-Control-Allow-Headers: Content-Type, Authorization');        // Define las cabeceras que el navegador tiene permitido enviar en su peticion.
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-// El navegador puede enviar una peticion OPTIONS (preflight) antes de la peticion POST.
-// Respondemos a esta peticion y terminamos el script.
+// El navegador puede enviar una peticion OPTIONS (preflight) antes de la peticion POST
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Responde con un código 200 (OK) para indicar que la futura petición POST está permitida
     http_response_code(200);
     exit();
 }
 
-// A partir de aqui, el codigo solo se ejecutara si el método NO es OPTIONS.
-// verificamos que la solicitud sea POST.
+// Verificamos que la solicitud sea POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Si el método no es POST, se envía un código de error 405 (Método no Permitido).
     http_response_code(405); 
     echo json_encode(['success' => false, 'message' => 'Método no permitido.']);
     exit();
@@ -32,71 +31,107 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Incluir el archivo de conexion a la base de datos
 require_once 'conexion.php';
 
+// Verificar que la conexión existe
+if (!$conn) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error de conexión a la base de datos.']);
+    exit();
+}
+
 // Obtener los datos JSON de la solicitud
-$input = file_get_contents('php://input');      // Lee el cuerpo de la peticion que contiene los datos JSON enviados desde JavaScript
-$data = json_decode($input, true);              // Convierte el texto JSON en un array asociativo de PHP
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
+// Debug: Log de los datos recibidos (quitar en producción)
+error_log("Datos recibidos: " . print_r($data, true));
 
-// Validar que los datos esperados esten presentes
+// Validar que los datos JSON se decodificaron correctamente
+if ($data === null) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Datos JSON inválidos.']);
+    exit();
+}
+
+// Validar que los datos esperados estén presentes
 if (empty($data['nombre']) || empty($data['apellido']) || empty($data['email']) || empty($data['password'])) {
-    // Si falta algun dato, responde con error 400 (Peticion Incorrecta)
     http_response_code(400); 
     echo json_encode(['success' => false, 'message' => 'Todos los campos son obligatorios.']);
     exit();
 }
 
-// LIMPIAR y obtener los datos.
-// Quita espacios en blanco al inicio y al final.
+// LIMPIAR y obtener los datos
 $nombre = trim($data['nombre']);
 $apellido = trim($data['apellido']);
-// Quita espacios y luego elimina caracteres no validos para un email.
 $email = filter_var(trim($data['email']), FILTER_SANITIZE_EMAIL);
-// Obtiene la contrasena tal como viene para validarla.
 $password = $data['password'];
 
-// Validaciones adicionales basicas
-// Despues de limpiar el email, verifica que su formato sea valido (contenga @, . etc).
+// Validaciones adicionales básicas
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Formato de correo electrónico inválido.']);
     exit();
 }
-// Verifica que la contrasena cumpla con un largo minimo.
+
 if (strlen($password) < 8) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'La contraseña debe tener al menos 8 caracteres.']);
     exit();
 }
 
+// Verificar si el email ya existe
+$stmt_check = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
+if (!$stmt_check) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error al verificar email: ' . $conn->error]);
+    exit();
+}
+
+$stmt_check->bind_param("s", $email);
+$stmt_check->execute();
+$result_check = $stmt_check->get_result();
+
+if ($result_check->num_rows > 0) {
+    http_response_code(409);
+    echo json_encode(['success' => false, 'message' => 'Este correo electrónico ya está registrado.']);
+    $stmt_check->close();
+    exit();
+}
+$stmt_check->close();
+
 // Hashear la contraseña antes de almacenarla
-$password_hash = password_hash($password, PASSWORD_BCRYPT); // BCRYPT es una opcion segura
+$password_hash = password_hash($password, PASSWORD_BCRYPT);
 
 // Preparar la consulta SQL para insertar el nuevo usuario
-$stmt = $conn->prepare("INSERT INTO usuarios (nombre, apellido, email, password_hash) VALUES (?, ?, ?, ?)");
+// NOTA: 'fecha_registro' se establece con NOW() directamente en la consulta, no se bindea.
+$stmt = $conn->prepare("INSERT INTO usuarios (nombre, apellido, email, password_hash, fecha_registro) VALUES (?, ?, ?, ?, NOW())");
 
-// Verificar si la preparacion de la consulta fallo
 if (!$stmt) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $conn->error]);
     exit();
 }
 
-// Vincular parametros a la consulta
-// 'ssss' indica que son 4 strings (nombre, apellido, email, password_hash)
+// Vincular parámetros a la consulta (solo los 4 primeros, ya que NOW() no es un parámetro bindeado)
 $stmt->bind_param("ssss", $nombre, $apellido, $email, $password_hash);
 
 // Ejecutar la consulta
 if ($stmt->execute()) {
+    // Obtener el ID del usuario recién creado
+    $user_id = $conn->insert_id;
+    
     // Registro exitoso
-    echo json_encode(['success' => true, 'message' => '¡Registro exitoso! Ahora puedes iniciar sesión.']);
+    echo json_encode([
+        'success' => true, 
+        'message' => '¡Registro exitoso! Ahora puedes iniciar sesión.',
+        'user_id' => $user_id
+    ]);
 } else {
-    // Error al ejecutar la consulta (ej. email duplicado por UNIQUE constraint)
-    // El codigo de error 1062 en MySQL significa "entrada duplicada" para una clave unica.
+    // Error al ejecutar la consulta
     if ($conn->errno == 1062) { 
         http_response_code(409); 
         echo json_encode(['success' => false, 'message' => 'Este correo electrónico ya está registrado.']);
     } else {
-        http_response_code(500); // Internal Server Error
+        http_response_code(500);
         echo json_encode(['success' => false, 'message' => 'Error al registrar el usuario: ' . $stmt->error]);
     }
 }
@@ -104,5 +139,4 @@ if ($stmt->execute()) {
 // Cerrar la sentencia y la conexión
 $stmt->close();
 $conn->close();
-
 ?>

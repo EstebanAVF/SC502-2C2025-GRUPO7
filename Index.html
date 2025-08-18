@@ -191,6 +191,84 @@
                     </div>
                 </section>
 
+
+                <section id="configuracion" class="seccion-app d-none">
+                    <h2 class="titulo-seccion mb-4">
+                        <i class="fas fa-cog me-2"></i>Configuración de Cuenta
+                    </h2>
+                    <div class="tarjeta-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Información Personal</h5>
+                                <form id="formConfiguracion">
+                                    <div class="mb-3">
+                                        <label for="nombreConfig" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombreConfig" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="apellidoConfig" class="form-label">Apellido</label>
+                                        <input type="text" class="form-control" id="apellidoConfig" disabled>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="emailConfig" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="emailConfig" disabled>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="btnEditarPerfil">Editar
+                                        Perfil</button>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Notificaciones</h5>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notifReportes" checked>
+                                    <label class="form-check-label" for="notifReportes">
+                                        Notificaciones de reportes
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notifRespuestas" checked>
+                                    <label class="form-check-label" for="notifRespuestas">
+                                        Respuestas a mis reportes
+                                    </label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notifEmail">
+                                    <label class="form-check-label" for="notifEmail">
+                                        Notificaciones por email
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <h5 class="mb-3">Privacidad</h5>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="perfilPublico" checked>
+                                    <label class="form-check-label" for="perfilPublico">
+                                        Perfil público
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="mostrarUbicacion">
+                                    <label class="form-check-label" for="mostrarUbicacion">
+                                        Mostrar ubicación en reportes
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-success me-2">Guardar Cambios</button>
+                            <button class="btn btn-outline-secondary">Cancelar</button>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="informes" class="seccion-app d-none">
                     <h2 class="titulo-seccion mb-4">
                         <i class="fas fa-chart-line me-2"></i>Informes de Vías
@@ -225,14 +303,15 @@
                         <h3 class="mb-3">Análisis de Tendencias</h3>
                         <p class="texto-muted">Gráficos de ejemplo de tendencias (futura implementación con librerías de
                             gráficos).</p>
+                        <!-- En la sección de Informes -->
                         <div class="tarjeta-info mb-4">
                             <h6 class="mb-2">Incidentes Semanales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Gráfico+Semanal" alt="Gráfico Semanal"
+                            <img src="https://via.placeholder.com/400x150?text=Grafico+Semanal" alt="Gráfico Semanal"
                                 class="img-fluid rounded">
                         </div>
                         <div class="tarjeta-info">
                             <h6 class="mb-2">Incidentes Mensuales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Gráfico+Mensual" alt="Gráfico Mensual"
+                            <img src="https://via.placeholder.com/400x150?text=Grafico+Mensual" alt="Gráfico Mensual"
                                 class="img-fluid rounded">
                         </div>
                     </div>
@@ -268,20 +347,22 @@
                     <div class="filtros-adicionales mt-4">
                         <h6 class="mb-3">Filtrar por tipo</h6>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroUrgente" data-filtro="urgente" checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroUrgente"
+                                data-filtro="urgente" checked>
                             <label class="form-check-label" for="filtroUrgente">
                                 <span class="badge-filtro urgente">Urgente</span>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroPrecaucion" data-filtro="precaucion"
-                                checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroPrecaucion"
+                                data-filtro="precaucion" checked>
                             <label class="form-check-label" for="filtroPrecaucion">
                                 <span class="badge-filtro precaucion">Precaución</span>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroInfo" data-filtro="info" checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroInfo"
+                                data-filtro="info" checked>
                             <label class="form-check-label" for="filtroInfo">
                                 <span class="badge-filtro info">Información</span>
                             </label>
