@@ -1,7 +1,5 @@
 <?php
 // get_incident_types.php
-// Configurar cabeceras para JSON y CORS
-// Esto permite que cualquier origen acceda a este recurso
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); 

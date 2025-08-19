@@ -31,13 +31,20 @@
     box-sizing: border-box;
 }
 
+/* ==================== INICIO DE LA CORRECCIÓN ==================== */
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--fondo-principal);
     color: var(--texto-principal);
     line-height: 1.6;
     padding-top: 80px;
+    
+    /* Convertimos el body en un contenedor flex que ocupa toda la altura */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
+/* ==================== FIN DE LA CORRECCIÓN ==================== */
 
 /*BARRA DE NAVEGACIÓN */
 .navbar {
@@ -72,14 +79,26 @@ body {
     border-color: var(--color-primario);
 }
 
+/* ==================== INICIO DE LA CORRECCIÓN ==================== */
+/* Hacemos que el contenido principal (cualquier sección activa) crezca para empujar el footer */
+.seccion-hero, #mainAppContent {
+    flex-grow: 1;
+}
+
 /*SECCIÓN HERO*/
 .seccion-hero {
     background: linear-gradient(135deg, var(--fondo-principal) 0%, var(--fondo-secundario) 100%);
-    padding: 120px 0 80px;
     text-align: center;
     position: relative;
     overflow: hidden;
+    
+    /* Usamos flexbox para centrar el contenido verticalmente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0; /* Ajustamos el padding */
 }
+/* ==================== FIN DE LA CORRECCIÓN ==================== */
 
 .seccion-hero::before {
     content: '';
@@ -742,4 +761,3 @@ body {
     border-color: #64748b;
     color: #fff;
 }
-

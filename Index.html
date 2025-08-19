@@ -191,84 +191,6 @@
                     </div>
                 </section>
 
-
-                <section id="configuracion" class="seccion-app d-none">
-                    <h2 class="titulo-seccion mb-4">
-                        <i class="fas fa-cog me-2"></i>Configuración de Cuenta
-                    </h2>
-                    <div class="tarjeta-info">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5 class="mb-3">Información Personal</h5>
-                                <form id="formConfiguracion">
-                                    <div class="mb-3">
-                                        <label for="nombreConfig" class="form-label">Nombre</label>
-                                        <input type="text" class="form-control" id="nombreConfig" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="apellidoConfig" class="form-label">Apellido</label>
-                                        <input type="text" class="form-control" id="apellidoConfig" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="emailConfig" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="emailConfig" disabled>
-                                    </div>
-                                    <button type="button" class="btn btn-primary" id="btnEditarPerfil">Editar
-                                        Perfil</button>
-                                </form>
-                            </div>
-                            <div class="col-md-6">
-                                <h5 class="mb-3">Notificaciones</h5>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="notifReportes" checked>
-                                    <label class="form-check-label" for="notifReportes">
-                                        Notificaciones de reportes
-                                    </label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="notifRespuestas" checked>
-                                    <label class="form-check-label" for="notifRespuestas">
-                                        Respuestas a mis reportes
-                                    </label>
-                                </div>
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="notifEmail">
-                                    <label class="form-check-label" for="notifEmail">
-                                        Notificaciones por email
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <div class="row">
-                            <div class="col-12">
-                                <h5 class="mb-3">Privacidad</h5>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="perfilPublico" checked>
-                                    <label class="form-check-label" for="perfilPublico">
-                                        Perfil público
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="mostrarUbicacion">
-                                    <label class="form-check-label" for="mostrarUbicacion">
-                                        Mostrar ubicación en reportes
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-success me-2">Guardar Cambios</button>
-                            <button class="btn btn-outline-secondary">Cancelar</button>
-                        </div>
-                    </div>
-                </section>
-
                 <section id="informes" class="seccion-app d-none">
                     <h2 class="titulo-seccion mb-4">
                         <i class="fas fa-chart-line me-2"></i>Informes de Vías
@@ -282,37 +204,26 @@
                                 <div class="tarjeta-estadistica">
                                     <h6 class="mb-3">Reportes por Prioridad (Últimas 24h)</h6>
                                     <ul class="list-unstyled">
-                                        <li>🚨 Urgente: <span class="badge bg-danger">15</span></li>
-                                        <li>⚠️ Precaución: <span class="badge bg-warning">30</span></li>
-                                        <li>ℹ️ Información: <span class="badge bg-info">50</span></li>
+                                        <li>🚨 Urgente: <span id="stats-urgente" class="badge bg-danger">0</span></li>
+                                        <li>⚠️ Precaución: <span id="stats-precaucion" class="badge bg-warning">0</span>
+                                        </li>
+                                        <li>ℹ️ Información: <span id="stats-info" class="badge bg-info">0</span></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="col-md-6 mb-4">
                                 <div class="tarjeta-estadistica">
                                     <h6 class="mb-3">Zonas de Mayor Incidencia</h6>
-                                    <ul class="list-unstyled">
-                                        <li>San José: <span class="badge bg-primary">25</span></li>
-                                        <li>Alajuela: <span class="badge bg-primary">18</span></li>
-                                        <li>Cartago: <span class="badge bg-primary">10</span></li>
+                                    <ul id="stats-zonas-incidencia" class="list-unstyled">
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
                         <h3 class="mb-3">Análisis de Tendencias</h3>
-                        <p class="texto-muted">Gráficos de ejemplo de tendencias (futura implementación con librerías de
-                            gráficos).</p>
-                        <!-- En la sección de Informes -->
+                        <p class="texto-muted">Distribución de todos los reportes recibidos según su prioridad.</p>
                         <div class="tarjeta-info mb-4">
-                            <h6 class="mb-2">Incidentes Semanales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Grafico+Semanal" alt="Gráfico Semanal"
-                                class="img-fluid rounded">
-                        </div>
-                        <div class="tarjeta-info">
-                            <h6 class="mb-2">Incidentes Mensuales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Grafico+Mensual" alt="Gráfico Mensual"
-                                class="img-fluid rounded">
+                            <canvas id="graficoPrioridades"></canvas>
                         </div>
                     </div>
                 </section>
@@ -407,87 +318,6 @@
         </div>
     </section>
 
-    <div class="modal fade" id="modalLogin" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title">Iniciar Sesión</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formularioLogin">
-                        <div class="mb-3">
-                            <label for="emailLogin" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="emailLogin" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordLogin" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordLogin" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary custom-btn-primary">Ingresar</button>
-                        </div>
-                        <hr class="my-3">
-                        <p class="text-center mb-0">
-                            ¿No tienes cuenta?
-                            <a href="#" class="custom-link" data-bs-toggle="modal" data-bs-target="#modalRegistro"
-                                data-bs-dismiss="modal">Regístrate</a>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalRegistro" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title">Registrarse</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formularioRegistro">
-                        <div class="mb-3">
-                            <label for="nombreRegistro" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombreRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellidoRegistro" class="form-label">Apellido</label> <input type="text"
-                                class="form-control" id="apellidoRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="emailRegistro" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="emailRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordRegistro" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPasswordRegistro" class="form-label">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" id="confirmPasswordRegistro" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input class="form-check-input" type="checkbox" id="termsCheckRegistro" required> <label
-                                class="form-check-label" for="termsCheckRegistro">Acepto los <a href="#"
-                                    class="custom-link">Términos y Condiciones</a></label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary custom-btn-primary">Crear Cuenta</button>
-                        </div>
-                        <hr class="my-3">
-                        <p class="text-center mb-0">
-                            ¿Ya tienes cuenta?
-                            <a href="#" class="custom-link" data-bs-toggle="modal" data-bs-target="#modalLogin"
-                                data-bs-dismiss="modal">Inicia Sesión</a>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <footer class="pie-pagina">
         <div class="container">
             <div class="row">
@@ -504,6 +334,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="scripts.js"></script>
 </body>
 

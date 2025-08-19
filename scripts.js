@@ -1,5 +1,3 @@
-// scripts.js
-// code to fetch and display reports
 class ViasSegurasApp {
     constructor() {
         this.mapa = null;
@@ -7,152 +5,148 @@ class ViasSegurasApp {
         this.todosLosReportes = [];
         this.provinciaSeleccionada = null;
         this.marcadoresMapa = [];
-        this.formReporte = null;
         this.filtrosActivos = {
             urgente: true,
             precaucion: true,
             info: true
         };
-        this.modoCreacionIncidente = false;
-
-        // Detectar BASE_URL automáticamente
-        this.BASE_URL = this.detectarBaseURL();
+        
+        // ==================== INICIO DE LA MODIFICACIÓN #1 ====================
+        // Se añade una propiedad para guardar la instancia del gráfico
+        this.graficoPrioridades = null;
+        // ==================== FIN DE LA MODIFICACIÓN #1 ====================
 
         this.datosProvincias = {
             'San José': {
-                lat: 9.9333,
-                lng: -84.0833,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 9.9333, lng: -84.0833,
                 cantones: {
-                    'San José': ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián'],
-                    'Escazú': ['Escazú', 'San Antonio', 'San Rafael'],
-                    'Desamparados': ['Desamparados', 'San Miguel', 'San Juan de Dios', 'San Rafael Arriba', 'San Antonio', 'Frailes', 'Patarrá'],
-                    'Moravia': ['San Vicente', 'San Jerónimo', 'Trinidad'],
-                    'Goicoechea': ['Guadalupe', 'San Francisco', 'Calle Blancos', 'Mata de Plátano', 'Ipís', 'Rancho Redondo', 'Purral'],
-                    'Santa Ana': ['Santa Ana', 'Salitral', 'Pozos', 'Uruca', 'Piedades', 'Brasil'],
-                    'Alajuelita': ['Alajuelita', 'San Josecito', 'San Antonio', 'Concepción', 'San Felipe']
+                    'San José': { lat: 9.9325, lng: -84.0787, distritos: ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián'] },
+                    'Escazú': { lat: 9.9208, lng: -84.1436, distritos: ['Escazú', 'San Antonio', 'San Rafael'] },
+                    'Desamparados': { lat: 9.8939, lng: -84.0673, distritos: ['Desamparados', 'San Miguel', 'San Juan de Dios', 'San Rafael Arriba', 'San Antonio', 'Frailes', 'Patarrá'] },
+                    'Puriscal': { lat: 9.8519, lng: -84.3142, distritos: ['Santiago', 'Mercedes Sur', 'Barbacoas', 'Grifo Alto', 'San Rafael'] },
+                    'Tarrazú': { lat: 9.6644, lng: -84.0292, distritos: ['San Marcos', 'San Lorenzo', 'San Carlos'] },
+                    'Aserrí': { lat: 9.8608, lng: -84.0922, distritos: ['Aserrí', 'Tarbaca', 'Vuelta de Jorco', 'San Gabriel', 'Legua', 'Monterrey'] },
+                    'Mora': { lat: 9.8806, lng: -84.2731, distritos: ['Colón', 'Guayabo', 'Tabarcia', 'Piedras Negras', 'Picagres'] },
+                    'Goicoechea': { lat: 9.9575, lng: -84.0450, distritos: ['Guadalupe', 'San Francisco', 'Calle Blancos', 'Mata de Plátano', 'Ipís', 'Rancho Redondo', 'Purral'] },
+                    'Santa Ana': { lat: 9.9328, lng: -84.1833, distritos: ['Santa Ana', 'Salitral', 'Pozos', 'Uruca', 'Piedades', 'Brasil'] },
+                    'Alajuelita': { lat: 9.9025, lng: -84.1033, distritos: ['Alajuelita', 'San Josecito', 'San Antonio', 'Concepción', 'San Felipe'] },
+                    'Vázquez de Coronado': { lat: 9.9881, lng: -84.0231, distritos: ['San Isidro', 'San Rafael', 'Dulce Nombre de Jesús', 'Patalillo', 'Cascajal'] },
+                    'Acosta': { lat: 9.7719, lng: -84.2403, distritos: ['San Ignacio', 'Guaitil', 'Palmichal', 'Cangrejal', 'Sabanillas'] },
+                    'Tibás': { lat: 9.9572, lng: -84.0822, distritos: ['San Juan', 'Cinco Esquinas', 'Anselmo Llorente', 'León XIII', 'Colima'] },
+                    'Moravia': { lat: 9.9658, lng: -84.0536, distritos: ['San Vicente', 'San Jerónimo', 'La Trinidad'] },
+                    'Montes de Oca': { lat: 9.9358, lng: -84.0494, distritos: ['San Pedro', 'Sabanilla', 'Mercedes', 'San Rafael'] },
+                    'Turrubares': { lat: 9.8353, lng: -84.4864, distritos: ['San Pablo', 'San Pedro', 'San Juan de Mata', 'San Luis'] },
+                    'Dota': { lat: 9.6808, lng: -83.9881, distritos: ['Santa María', 'Jardín', 'Copey'] },
+                    'Curridabat': { lat: 9.9142, lng: -84.0322, distritos: ['Curridabat', 'Granadilla', 'Sánchez', 'Tirrases'] },
+                    'Pérez Zeledón': { lat: 9.3739, lng: -83.7022, distritos: ['San Isidro de El General', 'El General', 'Daniel Flores', 'Rivas', 'San Pedro'] },
+                    'León Cortés': { lat: 9.7153, lng: -84.0792, distritos: ['San Pablo', 'San Andrés', 'Llano Bonito', 'San Isidro', 'Santa Cruz'] }
                 }
             },
             'Alajuela': {
-                lat: 10.0162,
-                lng: -84.2163,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 10.0162, lng: -84.2163,
                 cantones: {
-                    'Alajuela': ['Alajuela', 'San José', 'Carrizal', 'San Antonio', 'Guácima', 'San Isidro', 'Sabanilla', 'San Rafael', 'Río Segundo', 'Desamparados', 'Turrúcares', 'Tambor', 'Garita', 'Sarapiquí'],
-                    'San Ramón': ['San Ramón', 'Santiago', 'San Juan', 'Piedades Norte', 'Piedades Sur', 'San Rafael', 'San Isidro', 'Ángeles', 'Alfaro', 'Volio', 'Concepción'],
-                    'Grecia': ['Grecia', 'San Isidro', 'San José', 'San Roque', 'Tacares', 'Puente de Piedra', 'Bolívar'],
-                    'San Carlos': ['Quesada', 'Florencia', 'Buenavista', 'Aguas Zarcas', 'Venecia', 'Pital', 'La Fortuna', 'La Tigra', 'La Palmera', 'Venado', 'Cutris', 'Monterrey', 'Pocosol']
+                    'Alajuela': { lat: 10.0167, lng: -84.2167, distritos: ['Alajuela', 'San José', 'Carrizal', 'San Antonio', 'Guácima', 'San Isidro', 'Sabanilla', 'San Rafael', 'Río Segundo', 'Desamparados', 'Turrúcares', 'Tambor', 'Garita', 'Sarapiquí'] },
+                    'San Ramón': { lat: 10.0886, lng: -84.4706, distritos: ['San Ramón', 'Santiago', 'San Juan', 'Piedades Norte', 'Piedades Sur', 'San Rafael', 'San Isidro', 'Ángeles', 'Alfaro', 'Volio', 'Concepción'] },
+                    'Grecia': { lat: 10.0719, lng: -84.3117, distritos: ['Grecia', 'San Isidro', 'San José', 'San Roque', 'Tacares', 'Puente de Piedra', 'Bolívar'] },
+                    'San Mateo': { lat: 9.9589, lng: -84.5208, distritos: ['San Mateo', 'Desmonte', 'Jesús María', 'Labrador'] },
+                    'Atenas': { lat: 9.9786, lng: -84.3800, distritos: ['Atenas', 'Jesús', 'Mercedes', 'San Isidro', 'Concepción', 'San José', 'Santa Eulalia', 'Escobal'] },
+                    'Naranjo': { lat: 10.0967, lng: -84.3781, distritos: ['Naranjo', 'San Miguel', 'San José', 'Cirrí Sur', 'San Jerónimo', 'San Juan', 'El Rosario', 'Palmitos'] },
+                    'Palmares': { lat: 10.0592, lng: -84.4294, distritos: ['Palmares', 'Zaragoza', 'Buenos Aires', 'Santiago', 'Candelaria', 'Esquipulas', 'La Granja'] },
+                    'Poás': { lat: 10.1219, lng: -84.2503, distritos: ['San Pedro', 'San Juan', 'San Rafael', 'Carrillos', 'Sabana Redonda'] },
+                    'Orotina': { lat: 9.9114, lng: -84.5256, distritos: ['Orotina', 'El Mastate', 'Hacienda Vieja', 'Coyolar', 'La Ceiba'] },
+                    'San Carlos': { lat: 10.4686, lng: -84.5122, distritos: ['Quesada', 'Florencia', 'Buenavista', 'Aguas Zarcas', 'Venecia', 'Pital', 'La Fortuna', 'La Tigra', 'La Palmera', 'Venado', 'Cutris', 'Monterrey', 'Pocosol'] },
+                    'Zarcero': { lat: 10.1867, lng: -84.3942, distritos: ['Zarcero', 'Laguna', 'Tapesco', 'Guadalupe', 'Palmira', 'Zapote', 'Brisas'] },
+                    'Sarchí': { lat: 10.0931, lng: -84.3411, distritos: ['Sarchí Norte', 'Sarchí Sur', 'Toro Amarillo', 'San Pedro', 'Rodríguez'] },
+                    'Upala': { lat: 10.8981, lng: -85.0161, distritos: ['Upala', 'Aguas Claras', 'San José (Pizote)', 'Bijagua', 'Delicias', 'Dos Ríos', 'Yolillal', 'Canalete'] },
+                    'Los Chiles': { lat: 11.0333, lng: -84.7167, distritos: ['Los Chiles', 'Caño Negro', 'El Amparo', 'San Jorge'] },
+                    'Guatuso': { lat: 10.7167, lng: -84.8000, distritos: ['San Rafael', 'Buenavista', 'Cote', 'Katira'] },
+                    'Río Cuarto': { lat: 10.3667, lng: -84.2167, distritos: ['Río Cuarto', 'Santa Rita', 'Santa Isabel'] }
                 }
             },
             'Cartago': {
-                lat: 9.8634,
-                lng: -83.9194,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 9.8634, lng: -83.9194,
                 cantones: {
-                    'Cartago': ['Oriental', 'Occidental', 'Carmen', 'San Nicolás', 'Aguacaliente', 'Guadalupe', 'Corralillo', 'Tierra Blanca', 'Dulce Nombre', 'Llano Grande', 'Quebradilla'],
-                    'Paraíso': ['Paraíso', 'Santiago', 'Orosi', 'Cachí', 'Llanos de Santa Lucía'],
-                    'La Unión': ['Tres Ríos', 'San Diego', 'San Juan', 'San Rafael', 'Concepción', 'Dulce Nombre', 'San Ramón', 'Río Azul'],
-                    'Turrialba': ['Turrialba', 'La Suiza', 'Peralta', 'Santa Cruz', 'Santa Teresita', 'Pavones', 'Tuis', 'Tayutic', 'Santa Rosa', 'Tres Equis']
+                    'Cartago': { lat: 9.8667, lng: -83.9167, distritos: ['Oriental', 'Occidental', 'Carmen', 'San Nicolás', 'Aguacaliente (San Francisco)', 'Guadalupe (Arenilla)', 'Corralillo', 'Tierra Blanca', 'Dulce Nombre', 'Llano Grande', 'Quebradilla'] },
+                    'Paraíso': { lat: 9.8417, lng: -83.8667, distritos: ['Paraíso', 'Santiago', 'Orosi', 'Cachí', 'Llanos de Santa Lucía'] },
+                    'La Unión': { lat: 9.9167, lng: -84.0000, distritos: ['Tres Ríos', 'San Diego', 'San Juan', 'San Rafael', 'Concepción', 'Dulce Nombre', 'San Ramón', 'Río Azul'] },
+                    'Jiménez': { lat: 9.8167, lng: -83.7333, distritos: ['Juan Viñas', 'Tucurrique', 'Pejibaye'] },
+                    'Turrialba': { lat: 9.9000, lng: -83.6833, distritos: ['Turrialba', 'La Suiza', 'Peralta', 'Santa Cruz', 'Santa Teresita', 'Pavones', 'Tuis', 'Tayutic', 'Santa Rosa', 'Tres Equis', 'La Isabel', 'Chirripó'] },
+                    'Alvarado': { lat: 9.9000, lng: -83.8000, distritos: ['Pacayas', 'Cervantes', 'Capellades'] },
+                    'Oreamuno': { lat: 9.9167, lng: -83.8500, distritos: ['San Rafael', 'Cot', 'Potrero Cerrado', 'Cipreses', 'Santa Rosa'] },
+                    'El Guarco': { lat: 9.8167, lng: -83.9333, distritos: ['El Tejar', 'San Isidro', 'Tobosi', 'Patio de Agua'] }
                 }
             },
             'Heredia': {
-                lat: 10.0024,
-                lng: -84.1165,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 10.0024, lng: -84.1165,
                 cantones: {
-                    'Heredia': ['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'],
-                    'Barva': ['Barva', 'San Pedro', 'San Pablo', 'San Roque', 'Santa Lucía', 'San José de la Montaña'],
-                    'Santo Domingo': ['Santo Domingo', 'San Vicente', 'San Miguel', 'Paracito', 'Santo Tomás', 'Santa Rosa', 'Tures', 'Pará'],
-                    'San Rafael': ['San Rafael', 'San Josecito', 'Santiago', 'Ángeles', 'Concepción'],
-                    'San Isidro': ['San Isidro', 'San José', 'Concepción', 'San Francisco'],
-                    'Belén': ['San Antonio', 'La Ribera', 'La Asunción'],
-                    'Flores': ['San Joaquín', 'Barrantes', 'Llorente']
+                    'Heredia': { lat: 9.9983, lng: -84.1189, distritos: ['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'] },
+                    'Barva': { lat: 10.0194, lng: -84.1283, distritos: ['Barva', 'San Pedro', 'San Pablo', 'San Roque', 'Santa Lucía', 'San José de la Montaña'] },
+                    'Santo Domingo': { lat: 9.9806, lng: -84.0933, distritos: ['Santo Domingo', 'San Vicente', 'San Miguel', 'Paracito', 'Santo Tomás', 'Santa Rosa', 'Tures', 'Pará'] },
+                    'Santa Bárbara': { lat: 10.0400, lng: -84.1611, distritos: ['Santa Bárbara', 'San Pedro', 'San Juan', 'Jesús', 'Santo Domingo', 'Purabá'] },
+                    'San Rafael': { lat: 10.0503, lng: -84.0983, distritos: ['San Rafael', 'San Josecito', 'Santiago', 'Ángeles', 'Concepción'] },
+                    'San Isidro': { lat: 10.0383, lng: -84.0456, distritos: ['San Isidro', 'San José', 'Concepción', 'San Francisco'] },
+                    'Belén': { lat: 9.9767, lng: -84.1956, distritos: ['San Antonio', 'La Ribera', 'La Asunción'] },
+                    'Flores': { lat: 9.9883, lng: -84.1656, distritos: ['San Joaquín', 'Barrantes', 'Llorente'] },
+                    'San Pablo': { lat: 9.9822, lng: -84.0811, distritos: ['San Pablo', 'Rincón de Sabanilla'] },
+                    'Sarapiquí': { lat: 10.4600, lng: -84.0089, distritos: ['Puerto Viejo', 'La Virgen', 'Horquetas', 'Llanuras del Gaspar', 'Cureña'] }
                 }
             },
             'Guanacaste': {
-                lat: 10.4285,
-                lng: -85.3968,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 10.4285, lng: -85.3968,
                 cantones: {
-                    'Liberia': ['Liberia', 'Cañas Dulces', 'Mayorga', 'Nacascolo', 'Curubandé'],
-                    'Nicoya': ['Nicoya', 'Mansión', 'San Antonio', 'Quebrada Honda', 'Sámara', 'Nosara', 'Belén de Nosarita'],
-                    'Santa Cruz': ['Santa Cruz', 'Bolsón', 'Veintisiete de Abril', 'Tempate', 'Cartagena', 'Cuajiniquil', 'Diriá', 'Cabo Velas', 'Tamarindo'],
-                    'Bagaces': ['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'],
-                    'Carrillo': ['Filadelfia', 'Palmira', 'Sardinal', 'Belén'],
-                    'Cañas': ['Cañas', 'Palmira', 'San Miguel', 'Bebedero', 'Porozal']
+                    'Liberia': { lat: 10.6333, lng: -85.4333, distritos: ['Liberia', 'Cañas Dulces', 'Mayorga', 'Nacascolo', 'Curubandé'] },
+                    'Nicoya': { lat: 10.1458, lng: -85.4519, distritos: ['Nicoya', 'Mansión', 'San Antonio', 'Quebrada Honda', 'Sámara', 'Nosara', 'Belén de Nosarita'] },
+                    'Santa Cruz': { lat: 10.2597, lng: -85.6853, distritos: ['Santa Cruz', 'Bolsón', 'Veintisiete de Abril', 'Tempate', 'Cartagena', 'Cuajiniquil', 'Diriá', 'Cabo Velas', 'Tamarindo'] },
+                    'Bagaces': { lat: 10.5256, lng: -85.2483, distritos: ['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'] },
+                    'Carrillo': { lat: 10.4686, lng: -85.5683, distritos: ['Filadelfia', 'Palmira', 'Sardinal', 'Belén'] },
+                    'Cañas': { lat: 10.4319, lng: -85.0981, distritos: ['Cañas', 'Palmira', 'San Miguel', 'Bebedero', 'Porozal'] },
+                    'Abangares': { lat: 10.2817, lng: -84.9653, distritos: ['Las Juntas', 'Sierra', 'San Juan', 'Colorado'] },
+                    'Tilarán': { lat: 10.4681, lng: -84.9703, distritos: ['Tilarán', 'Quebrada Grande', 'Tronadora', 'Santa Rosa', 'Líbano', 'Tierras Morenas', 'Arenal'] },
+                    'Nandayure': { lat: 9.9833, lng: -85.3500, distritos: ['Carmona', 'Santa Rita', 'Zapotal', 'San Pablo', 'Porvenir', 'Bejuco'] },
+                    'La Cruz': { lat: 11.0717, lng: -85.6311, distritos: ['La Cruz', 'Santa Cecilia', 'La Garita', 'Santa Elena'] },
+                    'Hojancha': { lat: 10.0583, lng: -85.4211, distritos: ['Hojancha', 'Monte Romo', 'Puerto Carrillo', 'Huacas', 'Matambú'] }
                 }
             },
             'Puntarenas': {
-                lat: 9.9763,
-                lng: -84.8388,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 9.9763, lng: -84.8388,
                 cantones: {
-                    'Puntarenas': ['Puntarenas', 'Pitahaya', 'Chomes', 'Lepanto', 'Paquera', 'Manzanillo', 'Guacimal', 'Barranca', 'Monte Verde', 'Isla del Coco', 'Cóbano', 'Chacarita', 'Chira', 'Acapulco', 'El Roble', 'Arancibia'],
-                    'Esparza': ['Espíritu Santo', 'San Juan Grande', 'Macacona', 'San Rafael', 'San Jerónimo', 'Caldera'],
-                    'Buenos Aires': ['Buenos Aires', 'Volcán', 'Potrero Grande', 'Boruca', 'Pilas', 'Colinas', 'Chánguena', 'Biolley', 'Brunka'],
-                    'Montes de Oro': ['Miramar', 'La Unión', 'San Isidro'],
-                    'Osa': ['Puerto Cortés', 'Palmar', 'Sierpe', 'Bahía Ballena', 'Piedras Blancas', 'Bahía Drake']
+                    'Puntarenas': { lat: 9.9769, lng: -84.8322, distritos: ['Puntarenas', 'Pitahaya', 'Chomes', 'Lepanto', 'Paquera', 'Manzanillo', 'Guacimal', 'Barranca', 'Monte Verde', 'Isla del Coco', 'Cóbano', 'Chacarita', 'Chira', 'Acapulco', 'El Roble', 'Arancibia'] },
+                    'Esparza': { lat: 9.9925, lng: -84.6644, distritos: ['Espíritu Santo', 'San Juan Grande', 'Macacona', 'San Rafael', 'San Jerónimo', 'Caldera'] },
+                    'Buenos Aires': { lat: 9.1722, lng: -83.3347, distritos: ['Buenos Aires', 'Volcán', 'Potrero Grande', 'Boruca', 'Pilas', 'Colinas', 'Chánguena', 'Biolley', 'Brunka'] },
+                    'Montes de Oro': { lat: 10.1167, lng: -84.7167, distritos: ['Miramar', 'La Unión', 'San Isidro'] },
+                    'Osa': { lat: 8.9583, lng: -83.4564, distritos: ['Puerto Cortés', 'Palmar', 'Sierpe', 'Bahía Ballena', 'Piedras Blancas', 'Bahía Drake'] },
+                    'Quepos': { lat: 9.4308, lng: -84.1611, distritos: ['Quepos', 'Savegre', 'Naranjito'] },
+                    'Golfito': { lat: 8.6381, lng: -83.1658, distritos: ['Golfito', 'Puerto Jiménez', 'Guaycará', 'Pavón'] },
+                    'Coto Brus': { lat: 8.9667, lng: -82.9667, distritos: ['San Vito', 'Sabalito', 'Aguabuena', 'Limóncito', 'Pittier'] },
+                    'Parrita': { lat: 9.5186, lng: -84.3217, distritos: ['Parrita'] },
+                    'Corredores': { lat: 8.7833, lng: -82.9500, distritos: ['Corredor', 'La Cuesta', 'Canoas', 'Laurel'] },
+                    'Garabito': { lat: 9.6167, lng: -84.6333, distritos: ['Jacó', 'Tárcoles'] }
                 }
             },
             'Limón': {
-                lat: 9.9907,
-                lng: -83.0355,
-                incidentes: { urgente: 0, precaucion: 0, info: 0 },
+                lat: 9.9907, lng: -83.0355,
                 cantones: {
-                    'Limón': ['Limón', 'Valle La Estrella', 'Río Blanco', 'Matama'],
-                    'Pococí': ['Guápiles', 'Jiménez', 'Rita', 'Roxana', 'Cariari', 'Colorado', 'La Colonia'],
-                    'Siquirres': ['Siquirres', 'Pacuarito', 'Florida', 'Germania', 'Cairo', 'Alegría'],
-                    'Talamanca': ['Bratsi', 'Sixaola', 'Cahuita', 'Telire'],
-                    'Matina': ['Matina', 'Batán', 'Carrandi'],
-                    'Guácimo': ['Guácimo', 'Mercedes', 'Pocora', 'Río Jiménez', 'Duacarí']
+                    'Limón': { lat: 9.9889, lng: -83.0317, distritos: ['Limón', 'Valle La Estrella', 'Río Blanco', 'Matama'] },
+                    'Pococí': { lat: 10.4667, lng: -83.6500, distritos: ['Guápiles', 'Jiménez', 'Rita', 'Roxana', 'Cariari', 'Colorado', 'La Colonia'] },
+                    'Siquirres': { lat: 10.0986, lng: -83.5075, distritos: ['Siquirres', 'Pacuarito', 'Florida', 'Germania', 'Cairo', 'Alegría'] },
+                    'Talamanca': { lat: 9.6333, lng: -82.8500, distritos: ['Bratsi', 'Sixaola', 'Cahuita', 'Telire'] },
+                    'Matina': { lat: 10.0833, lng: -83.2833, distritos: ['Matina', 'Batán', 'Carrandi'] },
+                    'Guácimo': { lat: 10.2167, lng: -83.6833, distritos: ['Guácimo', 'Mercedes', 'Pocora', 'Río Jiménez', 'Duacarí'] }
                 }
             }
         };
-
-        // INICIALIZACIÓN SEGURA DE DOM
-        this.dom = this.inicializarDOM();
-        this.inicializar();
-    }
-
-    // MÉTODO PARA DETECTAR BASE_URL AUTOMÁTICAMENTE
-    detectarBaseURL() {
-        const currentPath = window.location.pathname;
-        const origin = window.location.origin;
-
-        // Si estamos en localhost
-        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-            // Buscar la carpeta del proyecto
-            if (currentPath.includes('SC502-2C2025-GRUPO7')) {
-                const projectIndex = currentPath.indexOf('SC502-2C2025-GRUPO7');
-                return origin + currentPath.substring(0, projectIndex + 'SC502-2C2025-GRUPO7'.length) + '/';
-            }
-            return origin + '/'; // fallback para localhost
-        }
-
-        // Para producción, ajustar según tu estructura
-        return origin + '/SC502-2C2025-GRUPO7/';
-    }
-
-    // INICIALIZACIÓN SEGURA DE ELEMENTOS DOM
-    inicializarDOM() {
-        const getElement = (id) => {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.warn(`Elemento con ID '${id}' no encontrado`);
-            }
-            return element;
-        };
-
-        return {
-            botonLogin: getElement('botonLogin'),
-            menuUsuario: getElement('menuUsuario'),
-            nombreUsuario: getElement('nombreUsuario'),
-            btnCerrarSesion: getElement('btnCerrarSesion'),
-            formularioLogin: getElement('formularioLogin'),
-            formularioRegistro: getElement('formularioRegistro'),
+        this.BASE_URL = 'http://localhost/Proyecto/';
+        this.dom = {
+            botonLogin: document.getElementById('botonLogin'),
+            menuUsuario: document.getElementById('menuUsuario'),
+            nombreUsuario: document.getElementById('nombreUsuario'),
+            btnCerrarSesion: document.getElementById('btnCerrarSesion'),
+            formularioLogin: document.getElementById('formularioLogin'),
+            formularioRegistro: document.getElementById('formularioRegistro'),
             modalLogin: null,
             modalRegistro: null,
         };
+        this.inicializar();
     }
 
     inicializar() {
@@ -163,255 +157,197 @@ class ViasSegurasApp {
         this.configurarModales();
         this.mostrarSeccion('inicio');
         this.cargarDatosIniciales();
+        this.cargarEstadisticas();
+        // ==================== INICIO DE LA MODIFICACIÓN #2 ====================
+        // Se llama a la nueva función para crear el gráfico al iniciar la app
+        this.inicializarGrafico();
+        // ==================== FIN DE LA MODIFICACIÓN #2 ====================
     }
+    
+    // ==================== INICIO DE LA MODIFICACIÓN #3 ====================
+    // Nueva función para crear y configurar el gráfico de pastel
+    inicializarGrafico() {
+        const ctx = document.getElementById('graficoPrioridades');
+        if (!ctx) return;
+
+        // Configuración para un estilo profesional y adaptado al tema oscuro
+        this.graficoPrioridades = new Chart(ctx, {
+            type: 'pie', // Tipo de gráfico
+            data: {
+                labels: ['Urgente', 'Precaución', 'Información'],
+                datasets: [{
+                    label: 'Reportes',
+                    data: [0, 0, 0], // Inicia con datos en cero
+                    backgroundColor: [
+                        'rgba(220, 38, 38, 0.7)',  // Rojo alerta
+                        'rgba(245, 158, 11, 0.7)', // Amarillo precaución
+                        'rgba(8, 145, 178, 0.7)'   // Cyan información
+                    ],
+                    borderColor: [
+                        '#334155', // Color del borde de la tarjeta para integrar
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#f1f5f9', // Color de texto para la leyenda
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        bodyFont: {
+                            size: 14
+                        },
+                        titleFont: {
+                            size: 16
+                        },
+                        padding: 12,
+                        cornerRadius: 6
+                    }
+                }
+            }
+        });
+    }
+    // ==================== FIN DE LA MODIFICACIÓN #3 ====================
 
     configurarEventos() {
-        const addEventListenerSafe = (element, event, handler) => {
-            if (element) {
-                element.addEventListener(event, handler);
-            } else {
-                console.warn(`No se pudo agregar event listener a elemento null`);
-            }
-        };
-
-        // CORREGIR: Usar arrow function para mantener el contexto de 'this'
-        addEventListenerSafe(document.getElementById('btnEnviarReporte'), 'click', (e) => this.enviarReporte(e));
-        addEventListenerSafe(document.getElementById('inputImagen'), 'change', (e) => this.previsualizarImagen(e));
-        addEventListenerSafe(document.getElementById('selectProvincia'), 'change', (e) => this.cambiarProvincia(e));
-        addEventListenerSafe(document.getElementById('selectCanton'), 'change', (e) => this.cambiarCanton(e));
-
-        addEventListenerSafe(this.dom.formularioLogin, 'submit', (e) => this.iniciarSesion(e));
-        addEventListenerSafe(this.dom.formularioRegistro, 'submit', (e) => this.registrarUsuario(e));
-        addEventListenerSafe(this.dom.btnCerrarSesion, 'click', () => this.cerrarSesion());
-
-        // Navigation links
+        document.getElementById('btnEnviarReporte')?.addEventListener('click', () => this.enviarReporte());
+        document.getElementById('inputImagen')?.addEventListener('change', (e) => this.previsualizarImagen(e));
+        document.getElementById('selectProvincia')?.addEventListener('change', (e) => this.cambiarProvincia(e));
+        document.getElementById('selectCanton')?.addEventListener('change', (e) => this.cambiarCanton(e));
+        document.getElementById('formularioLogin')?.addEventListener('submit', (e) => this.iniciarSesion(e));
+        document.getElementById('formularioRegistro')?.addEventListener('submit', (e) => this.registrarUsuario(e));
+        document.getElementById('btnCerrarSesion')?.addEventListener('click', () => this.cerrarSesion());
         document.querySelectorAll('.navbar-nav .nav-link[data-section], .btn[data-section]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.mostrarSeccion(e.currentTarget.dataset.section);
             });
         });
-
-        // Filtros
         document.querySelectorAll('.filtro-tipo').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => this.handleFiltroTipoChange(e));
         });
     }
 
-    // FUNCIÓN DE REPORTE CORREGIDA Y MEJORADA
-    // Actualiza la función de enviar reporte
-    // Función de enviar reporte mejorada con mejor manejo de errores
-    async enviarReporte(evento) {
-        if (evento) {
-            evento.preventDefault();
-        }
+    async enviarReporte() {
+        const descripcion = document.getElementById('textoReporte').value;
+        const prioridad = document.getElementById('prioridadReporte').value;
+        const provincia = document.getElementById('selectProvincia').value;
+        const canton = document.getElementById('selectCanton').value;
+        const distrito = document.getElementById('selectDistrito').value;
+        const imagenInput = document.getElementById('inputImagen');
 
         if (!this.usuario) {
             this.mostrarNotificacion('Debes iniciar sesión para poder reportar.', 'danger');
             this.dom.modalLogin?.show();
             return;
         }
-
-        const descripcion = document.getElementById('textoReporte').value.trim();
-        const provincia = document.getElementById('selectProvincia').value;
-        const canton = document.getElementById('selectCanton').value;
-        const distrito = document.getElementById('selectDistrito').value;
-        const prioridad = document.getElementById('prioridadReporte').value;
-        const imagenFile = document.getElementById('inputImagen').files[0];
-
-        if (!descripcion || !provincia || !canton) {
-            this.mostrarNotificacion('Descripción, provincia y cantón son obligatorios.', 'warning');
+        if (!descripcion.trim() || !provincia || !canton) {
+            this.mostrarNotificacion('Por favor, completa la descripción, provincia y cantón.', 'warning');
             return;
         }
 
-        // Crear FormData
         const formData = new FormData();
         formData.append('descripcion', descripcion);
+        formData.append('prioridad', prioridad);
         formData.append('provincia', provincia);
         formData.append('canton', canton);
         formData.append('distrito', distrito);
-        formData.append('prioridad', prioridad);
-        formData.append('id_usuario', this.usuario.id);
-        formData.append('id_tipo_incidente', 6);
-
-        if (imagenFile) {
-            formData.append('imagen', imagenFile);
+        if (imagenInput.files.length > 0) {
+            formData.append('imagen', imagenInput.files[0]);
+        }
+        
+        let lat, lng;
+        if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]) {
+            lat = this.datosProvincias[provincia].cantones[canton].lat;
+            lng = this.datosProvincias[provincia].cantones[canton].lng;
+        } else if (provincia && this.datosProvincias[provincia]) {
+            lat = this.datosProvincias[provincia].lat;
+            lng = this.datosProvincias[provincia].lng;
         }
 
-        // Mostrar loading en el botón
-        const btnEnviar = document.getElementById('btnEnviarReporte');
-        const textoOriginal = btnEnviar.innerHTML;
-        btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Enviando...';
-        btnEnviar.disabled = true;
+        if (lat && lng) {
+            formData.append('latitud', lat);
+            formData.append('longitud', lng);
+        }
 
         try {
-            console.log('Enviando reporte a:', this.BASE_URL + 'create_report.php');
-
-            const response = await fetch(this.BASE_URL + 'create_report.php', {
-                method: 'POST',
-                body: formData
-            });
-
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-
-            // Obtener el texto completo de la respuesta
-            const responseText = await response.text();
-            console.log('Response text completo:', responseText);
-
-            // Verificar si la respuesta está vacía
-            if (!responseText || responseText.trim() === '') {
-                throw new Error('Respuesta vacía del servidor');
-            }
-
-            // Verificar si la respuesta parece ser HTML en lugar de JSON
-            if (responseText.trim().startsWith('<') || responseText.includes('<br />') || responseText.includes('<!DOCTYPE')) {
-                console.error('Respuesta HTML recibida en lugar de JSON:', responseText.substring(0, 500));
-                throw new Error('El servidor devolvió HTML en lugar de JSON. Posible error de PHP. Revisa la consola del navegador.');
-            }
-
-            // Intentar parsear JSON
-            let result;
-            try {
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing JSON:', parseError);
-                console.error('Respuesta que causó el error:', responseText);
-                throw new Error(`Error parsing JSON: ${parseError.message}. Respuesta: ${responseText.substring(0, 200)}`);
-            }
-
-            if (result.success) {
+            const response = await fetch(this.BASE_URL + 'create_report.php', { method: 'POST', body: formData });
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
                 this.mostrarNotificacion(result.message, 'success');
-                this.limpiarFormularioReporte();
-                await this.cargarDatosIniciales(); // Recargar reportes
-                if (this.usuario) {
-                    this.cargarPuntosUsuario(); // Actualizar puntos
+                this.limpiarFormulario();
+                this.cargarDatosIniciales();
+                this.cargarEstadisticas();
+
+                if (result.nuevos_puntos !== undefined) {
+                    this.usuario.puntos_totales = result.nuevos_puntos;
                 }
-            } else {
-                this.mostrarNotificacion('Error: ' + result.message, 'danger');
-            }
+                if (result.nuevo_rango_nombre) {
+                    this.usuario.nombre_rango = result.nuevo_rango_nombre;
+                }
+                localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
+                this.actualizarUIUsuario();
 
+            } else {
+                this.mostrarNotificacion('Error: ' + (result.message || 'No se pudo enviar.'), 'danger');
+            }
         } catch (error) {
-            console.error('Error completo:', error);
-            console.error('Stack trace:', error.stack);
-
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                this.mostrarNotificacion('Error de conexión. Verifica tu conexión a internet.', 'danger');
-            } else if (error.message.includes('JSON')) {
-                this.mostrarNotificacion('Error de formato de respuesta del servidor.', 'danger');
-            } else {
-                this.mostrarNotificacion('Error: ' + error.message, 'danger');
-            }
-        } finally {
-            // Restaurar botón
-            btnEnviar.innerHTML = textoOriginal;
-            btnEnviar.disabled = false;
+            console.error('Error de red:', error);
+            this.mostrarNotificacion('Ocurrió un error de red.', 'danger');
         }
     }
 
-    /**  limpiarFormulario() {
-         const elementos = [
-             { id: 'textoReporte', valor: '' },
-             { id: 'previewImagen', html: '' },
-             { id: 'inputImagen', valor: '' },
-             { id: 'prioridadReporte', valor: 'info' },
-             { id: 'selectProvincia', valor: '' }
-         ];
- 
-         elementos.forEach(elem => {
-             const element = document.getElementById(elem.id);
-             if (element) {
-                 if (elem.html !== undefined) {
-                     element.innerHTML = elem.html;
-                 } else {
-                     element.value = elem.valor;
-                 }
-             }
-         });
- 
-         this.cambiarProvincia({ target: { value: '' } });
-     }**/
-
-    limpiarFormularioReporte() {
+    limpiarFormulario() {
         document.getElementById('textoReporte').value = '';
-        document.getElementById('selectProvincia').value = '';
-        document.getElementById('selectCanton').innerHTML = '<option value="">Cantón *</option>';
-        document.getElementById('selectDistrito').innerHTML = '<option value="">Distrito</option>';
-        document.getElementById('selectCanton').disabled = true;
-        document.getElementById('selectDistrito').disabled = true;
-        document.getElementById('prioridadReporte').value = 'info';
-        document.getElementById('inputImagen').value = '';
         document.getElementById('previewImagen').innerHTML = '';
-
-        // Resetear checkbox si existe
-        const checkboxAnonimo = document.getElementById('modoAnonimo');
-        if (checkboxAnonimo) {
-            checkboxAnonimo.checked = false;
-        }
+        document.getElementById('inputImagen').value = '';
+        document.getElementById('prioridadReporte').value = 'info';
+        document.getElementById('selectProvincia').value = '';
+        this.cambiarProvincia({ target: { value: '' } });
     }
-
+    
     async cargarDatosIniciales() {
         const feedContainer = document.getElementById('feedReportes');
         if (feedContainer) {
-            feedContainer.innerHTML = '<div class="text-center py-3"><i class="fas fa-spinner fa-spin me-2"></i>Cargando reportes...</div>';
+            feedContainer.innerHTML = '<p class="text-center texto-muted">Cargando reportes...</p>';
         }
-
         try {
-            console.log('Cargando datos desde:', this.BASE_URL + 'get_reports.php');
-
-            const response = await fetch(this.BASE_URL + 'get_reports.php');
-            console.log('Response status:', response.status);
-
+            const response = await fetch(this.BASE_URL + 'get_reports.php?t=' + new Date().getTime());
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                throw new Error(`Error: ${response.status}`);
             }
-
-            const result = await response.json();  // Parsear directamente como JSON
-            console.log('Response data:', result);
-
-            // Verificar estructura de respuesta
-            if (!result.success) {
-                throw new Error(result.message || 'Error en la respuesta del servidor');
-            }
-
-            if (!Array.isArray(result.data)) {
-                throw new Error('Formato de datos inválido: se esperaba un array');
-            }
-
-            const reportes = result.data;
-            console.log(`Reportes recibidos: ${reportes.length}`);
-
-            if (feedContainer) {
-                feedContainer.innerHTML = '';
-            }
-
-            if (reportes.length === 0) {
-                if (feedContainer) {
-                    feedContainer.innerHTML = '<div class="alert alert-info text-center">No hay reportes para mostrar en este momento.</div>';
-                }
-                return;
-            }
-
-            this.todosLosReportes = reportes;
+            
+            this.todosLosReportes = await response.json();
             this.procesarYRenderizarTodo();
 
-            // Actualizar el mapa con los reportes
-            this.actualizarMapaConReportes(reportes);
-
         } catch (error) {
-            console.error('Error cargando reportes:', error);
+            console.error('Error fatal al cargar reportes:', error);
             if (feedContainer) {
-                feedContainer.innerHTML = `<div class="alert alert-danger">Error: ${error.message}<br><small>URL: ${this.BASE_URL}get_reports.php</small></div>`;
+                feedContainer.innerHTML = '<p class="text-center text-danger">No se pudieron cargar los reportes iniciales.</p>';
             }
         }
     }
-
+    
     procesarYRenderizarTodo() {
         this.procesarDatosDeReportes(this.todosLosReportes);
         this.actualizarPanelProvincias();
         this.aplicarFiltrosYRenderizar();
     }
-
+    
     aplicarFiltrosYRenderizar() {
         let reportesFiltrados = this.todosLosReportes;
 
@@ -420,194 +356,152 @@ class ViasSegurasApp {
         }
 
         reportesFiltrados = reportesFiltrados.filter(r => {
-            const prioridadLower = (r.prioridad || 'info').toLowerCase();
-            return this.filtrosActivos[prioridadLower];
+            const prioridad = r.prioridad.toLowerCase();
+            return (prioridad === 'precaucion' || prioridad === 'precaución') 
+                   ? this.filtrosActivos.precaucion 
+                   : this.filtrosActivos[prioridad];
         });
 
         this.renderizarFeed(reportesFiltrados);
         this.actualizarMapaConReportes(reportesFiltrados);
+        this.addLikeButtonListeners();
+    }
+    //////////////////////////////////////////////////////////////////////
+    addLikeButtonListeners() {
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            const handleLikeClick = async (event) => {
+                event.stopPropagation();
+                const reportId = button.dataset.reportId;
+                button.disabled = true;
+
+                try {
+                    const response = await this.voteForReport(reportId);
+                    if (response.success) {
+                        const countSpan = button.querySelector('.like-count');
+                        const currentLikes = parseInt(countSpan.textContent, 10);
+                        countSpan.textContent = currentLikes + 1;
+                        button.classList.remove('btn-outline-light');
+                        button.classList.add('btn-primary');
+                    } else {
+                        button.classList.remove('btn-outline-light');
+                        button.classList.add('btn-primary');
+                    }
+                } catch (error) {
+                    console.error('Error al votar:', error);
+                    this.mostrarNotificacion('No se pudo registrar tu voto. Revisa si has iniciado sesión.', 'danger');
+                    button.disabled = false;
+                }
+            };
+
+            button.removeEventListener('click', button.handleLikeClick);
+            button.addEventListener('click', handleLikeClick);
+            button.handleLikeClick = handleLikeClick;
+        });
     }
 
+    async voteForReport(reportId) {
+        const response = await fetch(this.BASE_URL + 'vote_report.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ report_id: reportId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error en la solicitud de voto.');
+        }
+        return await response.json();
+    }
+    
     renderizarFeed(reportes) {
         const feedContainer = document.getElementById('feedReportes');
-        if (!feedContainer) return;
-
-        feedContainer.innerHTML = '';
-
-        if (reportes.length === 0) {
-            feedContainer.innerHTML = '<div class="alert alert-info text-center">No hay reportes que coincidan con los filtros seleccionados.</div>';
+        if (!feedContainer) {
             return;
         }
-
+        feedContainer.innerHTML = '';
+        if (reportes.length === 0) {
+            feedContainer.innerHTML = '<p class="text-center texto-muted">No hay reportes que coincidan con los filtros seleccionados.</p>';
+            return;
+        }
         reportes.forEach(report => {
-            const estadoBadge = this.obtenerBadgeEstado(report.estado_reporte || 'normal');
-            const botonesAccion = this.usuario ? `
-            <div class="d-flex gap-2 mt-2">
-                <button class="btn btn-sm btn-outline-success btn-voto-positivo" onclick="window.app.votar(${report.id}, 'positivo')">
-                    <i class="fas fa-thumbs-up me-1"></i> ${report.votos_positivos || 0}
-                </button>
-                <button class="btn btn-sm btn-outline-danger btn-voto-negativo" onclick="window.app.votar(${report.id}, 'negativo')">
-                    <i class="fas fa-thumbs-down me-1"></i> ${report.votos_negativos || 0}
-                </button>
-                <button class="btn btn-sm btn-outline-warning" onclick="window.app.mostrarModalInforme(${report.id})">
-                    <i class="fas fa-flag me-1"></i> Informar
-                </button>
-            </div>
-        ` : `<div class="text-muted small mt-2">
-            <i class="fas fa-thumbs-up me-1"></i> ${report.votos_positivos || 0} 
-            <i class="fas fa-thumbs-down ms-2 me-1"></i> ${report.votos_negativos || 0}
-        </div>`;
-
-            // CORREGIR: Manejo correcto de imágenes
-            let imagenHTML = '';
-            if (report.imagen &&
-                report.imagen !== 'NULL' &&
-                report.imagen !== 'null' &&
-                report.imagen.trim() !== '') {
-
-                // Construir la URL completa de la imagen
-                const imagenUrl = report.imagen.startsWith('http')
-                    ? report.imagen
-                    : this.BASE_URL + report.imagen;
-
-                imagenHTML = `
-                <div class="mb-2">
-                    <img src="${imagenUrl}" 
-                         class="img-fluid rounded" 
-                         alt="Imagen del reporte" 
-                         style="max-height: 300px; width: 100%; object-fit: cover;"
-                         onerror="this.style.display='none';">
-                </div>`;
-            }
-
-            const reportHTML = `
-            <div class="card mb-3" data-reporte-id="${report.id}">
-                <div class="card-body">
-                    <div class="d-flex align-items-start mb-2">
-                        <div class="flex-shrink-0 me-3">
-                            <i class="fas fa-user-circle fa-2x text-secondary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${this.escapeHtml(report.usuario_nombre || 'Usuario')} ${this.escapeHtml(report.usuario_apellido || '')} 
-                                <small class="badge bg-secondary ms-1">${this.escapeHtml(report.usuario_rango || 'Novato')}</small>
-                            </h6>
-                            <small class="text-muted">
-                                ${new Date(report.created_at).toLocaleString('es-ES')} • 
-                                ${this.escapeHtml(report.provincia)}, ${this.escapeHtml(report.canton)}
-                                ${report.distrito ? ', ' + this.escapeHtml(report.distrito) : ''}
-                            </small>
-                        </div>
-                        <div class="flex-shrink-0">
-                            ${estadoBadge}
-                        </div>
-                    </div>
-                    <p class="mb-2">${this.escapeHtml(report.descripcion)}</p>
-                    ${imagenHTML}
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                            <span class="badge bg-${this.getPrioridadColor(report.prioridad)} me-1">
-                                ${this.escapeHtml((report.prioridad || 'Info').toUpperCase())}
-                            </span>
-                            <span class="badge bg-secondary">
-                                ${this.escapeHtml(report.tipo_incidente_nombre || 'General')}
-                            </span>
-                        </div>
-                    </div>
-                    ${botonesAccion}
-                </div>
-            </div>
-        `;
+            const reportHTML = `<div class="tarjeta-info mb-3"><div class="d-flex align-items-start mb-2"><div class="avatar-usuario me-3"><i class="fas fa-user-circle"></i></div><div class="flex-grow-1"><h6 class="mb-0">${report.usuario_nombre} ${report.usuario_apellido}</h6><small class="texto-muted">${new Date(report.created_at).toLocaleString()} &middot; ${report.provincia}, ${report.canton}</small></div></div><p class="mb-2">${report.descripcion}</p>${report.imagen ? `<img src="${this.BASE_URL}uploads/${report.imagen}" class="img-fluid rounded mb-2" alt="Imagen del reporte">` : ''}<div class="d-flex justify-content-between align-items-center"><div><span class="badge-filtro ${report.prioridad.toLowerCase()}">${report.prioridad}</span><span class="badge bg-secondary">${report.tipo_incidente_nombre || 'General'}</span></div><button class="btn btn-sm btn-outline-light like-button" data-report-id="${report.id}"><i class="fas fa-thumbs-up me-1"></i> <span class="like-count">${report.total_likes}</span></button></div></div>`;
             feedContainer.insertAdjacentHTML('beforeend', reportHTML);
         });
     }
 
-    getPrioridadColor(prioridad) {
-        switch ((prioridad || '').toLowerCase()) {
-            case 'urgente': return 'danger';
-            case 'precaucion': return 'warning';
-            case 'info': return 'info';
-            default: return 'secondary';
-        }
-    }
-
-    // FUNCIÓN PARA ESCAPAR HTML Y PREVENIR XSS
-    escapeHtml(text) {
-        if (text === null || text === undefined) return '';
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return String(text).replace(/[&<>"']/g, function (m) { return map[m]; });
-    }
-
     procesarDatosDeReportes(reportes) {
-        // Reset contadores
         for (const provincia in this.datosProvincias) {
             this.datosProvincias[provincia].incidentes = { urgente: 0, precaucion: 0, info: 0 };
         }
-
         reportes.forEach(reporte => {
-            if (reporte.provincia && this.datosProvincias[reporte.provincia]) {
-                const prioridadLower = (reporte.prioridad || 'info').toLowerCase();
-                if (this.datosProvincias[reporte.provincia].incidentes[prioridadLower] !== undefined) {
-                    this.datosProvincias[reporte.provincia].incidentes[prioridadLower]++;
-                }
+            let prioridadLower = reporte.prioridad.toLowerCase();
+            if (prioridadLower === 'precaución') {
+                prioridadLower = 'precaucion';
+            }
+            if (this.datosProvincias[reporte.provincia] && this.datosProvincias[reporte.provincia].incidentes[prioridadLower] !== undefined) {
+                this.datosProvincias[reporte.provincia].incidentes[prioridadLower]++;
             }
         });
     }
-
+    
     actualizarPanelProvincias() {
         const contenedor = document.getElementById('listaProvincias');
-        if (!contenedor) return;
-
+        if (!contenedor) {
+            return;
+        }
         contenedor.innerHTML = '';
-
         Object.entries(this.datosProvincias).forEach(([provincia, datos]) => {
             const totalProvincia = datos.incidentes.urgente + datos.incidentes.precaucion + datos.incidentes.info;
             const itemProvincia = document.createElement('div');
-            itemProvincia.className = `list-group-item list-group-item-action d-flex justify-content-between align-items-center ${this.provinciaSeleccionada === provincia ? 'active' : ''}`;
-            itemProvincia.innerHTML = `
-                <span>${this.escapeHtml(provincia)}</span>
-                <span class="badge bg-primary rounded-pill">${totalProvincia}</span>
-            `;
+            itemProvincia.className = `item-provincia ${this.provinciaSeleccionada === provincia ? 'activa' : ''}`;
+            itemProvincia.innerHTML = `<div class="nombre-provincia"><span>${provincia}</span><span class="contador-incidentes">${totalProvincia}</span></div>`;
             itemProvincia.addEventListener('click', () => this.handleProvinciaClick(provincia));
             contenedor.appendChild(itemProvincia);
         });
     }
-
+    
     handleProvinciaClick(provincia) {
         this.provinciaSeleccionada = this.provinciaSeleccionada === provincia ? null : provincia;
         this.aplicarFiltrosYRenderizar();
         this.actualizarPanelProvincias();
     }
-
+    
     handleFiltroTipoChange(evento) {
         const filtro = evento.target.dataset.filtro;
         const estaActivo = evento.target.checked;
         this.filtrosActivos[filtro] = estaActivo;
         this.aplicarFiltrosYRenderizar();
     }
-
+    
     actualizarMapaConReportes(reportes) {
-        if (!this.mapa) return;
+        if (!this.mapa) {
+            return;
+        }
 
-        // Limpiar marcadores existentes
         this.marcadoresMapa.forEach(marcador => this.mapa.removeLayer(marcador));
         this.marcadoresMapa = [];
 
-        let latLngs = [];
+        const latLngs = [];
 
         reportes.forEach(reporte => {
-            if (reporte.latitud && reporte.longitud && reporte.latitud !== 0) {
-                const lat = parseFloat(reporte.latitud);
-                const lng = parseFloat(reporte.longitud);
+            const lat = parseFloat(reporte.latitud);
+            const lng = parseFloat(reporte.longitud);
+
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
                 const latLng = [lat, lng];
 
-                const iconColor = reporte.prioridad.toLowerCase() === 'urgente' ? 'red' :
-                    reporte.prioridad.toLowerCase() === 'precaucion' ? 'orange' : 'blue';
+                let prioridadLower = reporte.prioridad.toLowerCase();
+                if (prioridadLower === 'precaución') {
+                    prioridadLower = 'precaucion';
+                }
+                
+                let iconColor = 'blue';
+                if (prioridadLower === 'urgente') {
+                    iconColor = 'red';
+                } else if (prioridadLower === 'precaucion') {
+                    iconColor = 'orange';
+                }
 
                 const customIcon = L.icon({
                     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${iconColor}.png`,
@@ -621,75 +515,38 @@ class ViasSegurasApp {
                 const marcador = L.marker(latLng, { icon: customIcon })
                     .addTo(this.mapa)
                     .bindPopup(`
-                    <b>${reporte.tipo_incidente_nombre || 'Reporte'}</b><br>
-                    <small>${reporte.provincia}, ${reporte.canton}</small>
-                    <hr style="margin: 5px 0;">
-                    ${reporte.descripcion.substring(0, 70)}...
-                `);
-
+                        <b>${reporte.tipo_incidente_nombre || 'Reporte'}</b><br>
+                        <small>${reporte.provincia}, ${reporte.canton}</small>
+                        <hr style="margin: 5px 0;">
+                        ${reporte.descripcion.substring(0, 100)}...
+                    `);
+                
                 this.marcadoresMapa.push(marcador);
                 latLngs.push(latLng);
             }
         });
 
         if (latLngs.length > 0) {
-            this.mapa.fitBounds(latLngs, { padding: [50, 50], maxZoom: 14 });
+            this.mapa.fitBounds(latLngs, { padding: [50, 50], maxZoom: 15 });
         } else if (!this.provinciaSeleccionada) {
-            this.mapa.setView([9.7489, -83.7534], 8);  // Vista por defecto de Costa Rica
+            this.mapa.setView([9.7489, -83.7534], 8);
         }
-
-        this.mapa.invalidateSize();
     }
-
+    
     inicializarMapa() {
         if (document.getElementById('mapaLeaflet')) {
             this.mapa = L.map('mapaLeaflet').setView([9.7489, -83.7534], 8);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this.mapa);
-
-            this.mapa.on('click', (e) => {
-                if (this.usuario && this.modoCreacionIncidente) {
-                    this.mostrarModalCrearIncidente(e.latlng.lat, e.latlng.lng);
-                }
-            });
-
-            this.agregarControlMapa();
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(this.mapa);
         }
-    }
-
-    agregarControlMapa() {
-        const CustomControl = L.Control.extend({
-            onAdd: (map) => {
-                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-                container.style.backgroundColor = 'white';
-                container.style.padding = '5px';
-                container.style.cursor = 'pointer';
-                container.innerHTML = '📍 Crear Incidente';
-                container.onclick = () => {
-                    if (this.usuario) {
-                        this.modoCreacionIncidente = !this.modoCreacionIncidente;
-                        container.style.backgroundColor = this.modoCreacionIncidente ? '#007bff' : 'white';
-                        container.style.color = this.modoCreacionIncidente ? 'white' : 'black';
-                        this.mostrarNotificacion(
-                            this.modoCreacionIncidente
-                                ? 'Modo creación activado. Haz clic en el mapa para crear un incidente.'
-                                : 'Modo creación desactivado.',
-                            'info'
-                        );
-                    } else {
-                        this.mostrarNotificacion('Debes iniciar sesión para crear incidentes.', 'warning');
-                    }
-                };
-                return container;
-            }
-        });
-
-        new CustomControl({ position: 'topright' }).addTo(this.mapa);
     }
 
     mostrarSeccion(seccionId) {
         document.querySelectorAll('section.seccion-hero, div#mainAppContent').forEach(sec => sec.classList.add('d-none'));
         document.querySelectorAll('.seccion-app').forEach(sec => sec.classList.add('d-none'));
-
+        
         if (seccionId === 'inicio') {
             document.getElementById('inicio').classList.remove('d-none');
         } else {
@@ -699,7 +556,7 @@ class ViasSegurasApp {
                 seccionActiva.classList.remove('d-none');
             }
             if (seccionId === 'mapa' && this.mapa) {
-                this.mapa.invalidateSize();
+                setTimeout(() => this.mapa.invalidateSize(), 10);
             }
         }
     }
@@ -707,13 +564,19 @@ class ViasSegurasApp {
     configurarModales() {
         const modalLoginEl = document.getElementById('modalLogin');
         const modalRegistroEl = document.getElementById('modalRegistro');
-        if (modalLoginEl) this.dom.modalLogin = new bootstrap.Modal(modalLoginEl);
-        if (modalRegistroEl) this.dom.modalRegistro = new bootstrap.Modal(modalRegistroEl);
+        if (modalLoginEl) {
+            this.dom.modalLogin = new bootstrap.Modal(modalLoginEl);
+        }
+        if (modalRegistroEl) {
+            this.dom.modalRegistro = new bootstrap.Modal(modalRegistroEl);
+        }
     }
 
     inicializarSelectoresUbicacion() {
         const selectProvincia = document.getElementById('selectProvincia');
-        if (!selectProvincia) return;
+        if (!selectProvincia) {
+            return;
+        }
         selectProvincia.innerHTML = '<option value="">Provincia *</option>';
         Object.keys(this.datosProvincias).forEach(provincia => {
             const option = document.createElement('option');
@@ -731,7 +594,8 @@ class ViasSegurasApp {
         selectDistrito.innerHTML = '<option value="">Distrito</option>';
         selectCanton.disabled = true;
         selectDistrito.disabled = true;
-        if (provincia) {
+        
+        if (provincia && this.datosProvincias[provincia]) {
             selectCanton.disabled = false;
             Object.keys(this.datosProvincias[provincia].cantones).forEach(canton => {
                 const option = document.createElement('option');
@@ -741,16 +605,19 @@ class ViasSegurasApp {
             });
         }
     }
-
+    
     cambiarCanton(evento) {
         const provincia = document.getElementById('selectProvincia').value;
         const canton = evento.target.value;
         const selectDistrito = document.getElementById('selectDistrito');
-        selectDistrito.innerHTML = '<option value="">Distrito</option>';
+        selectDistrito.innerHTML = '<option value="">Distrito (Opcional)</option>';
         selectDistrito.disabled = true;
-        if (provincia && canton && this.datosProvincias[provincia].cantones[canton]) {
+
+        if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]?.distritos) {
             selectDistrito.disabled = false;
-            this.datosProvincias[provincia].cantones[canton].forEach(distrito => {
+            const distritos = this.datosProvincias[provincia].cantones[canton].distritos;
+            
+            distritos.forEach(distrito => {
                 const option = document.createElement('option');
                 option.value = distrito;
                 option.textContent = distrito;
@@ -758,7 +625,7 @@ class ViasSegurasApp {
             });
         }
     }
-
+    
     previsualizarImagen(evento) {
         const archivo = evento.target.files[0];
         const preview = document.getElementById('previewImagen');
@@ -775,26 +642,9 @@ class ViasSegurasApp {
         evento.preventDefault();
         const email = document.getElementById('emailLogin').value;
         const password = document.getElementById('passwordLogin').value;
-
         try {
-            const response = await fetch(this.BASE_URL + 'login.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            // MANEJO MEJORADO DE RESPUESTAS JSON
-            let data;
-            try {
-                const responseText = await response.text();
-                console.log('Login response:', responseText); // Debug
-                data = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing login JSON:', parseError);
-                this.mostrarNotificacion('Error del servidor al iniciar sesión.', 'danger');
-                return;
-            }
-
+            const response = await fetch(this.BASE_URL + 'login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+            const data = await response.json();
             if (response.ok && data.success) {
                 this.usuario = data.user;
                 localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
@@ -806,131 +656,45 @@ class ViasSegurasApp {
                 this.mostrarNotificacion('Error: ' + (data.message || 'Credenciales inválidas.'), 'danger');
             }
         } catch (error) {
-            console.error('Error al iniciar sesión:', error);
             this.mostrarNotificacion('Ocurrió un error. Inténtalo de nuevo.', 'danger');
         }
     }
 
     async registrarUsuario(evento) {
         evento.preventDefault();
-
-        const nombre = document.getElementById('nombreRegistro').value.trim();
-        const apellido = document.getElementById('apellidoRegistro').value.trim();
-        const email = document.getElementById('emailRegistro').value.trim();
+        const nombre = document.getElementById('nombreRegistro').value;
+        const apellido = document.getElementById('apellidoRegistro').value;
+        const email = document.getElementById('emailRegistro').value;
         const password = document.getElementById('passwordRegistro').value;
         const confirmPassword = document.getElementById('confirmPasswordRegistro').value;
         const termsCheck = document.getElementById('termsCheckRegistro').checked;
-
-        console.log('Valores del formulario:', {
-            nombre, apellido, email, password: '***', confirmPassword: '***', termsCheck
-        });
-
-        if (!nombre || !apellido || !email || !password) {
-            this.mostrarNotificacion('Todos los campos son obligatorios.', 'warning');
-            return;
-        }
-
         if (password !== confirmPassword) {
             this.mostrarNotificacion('Las contraseñas no coinciden.', 'warning');
             return;
         }
-
-        if (password.length < 8) {
-            this.mostrarNotificacion('La contraseña debe tener al menos 8 caracteres.', 'warning');
-            return;
-        }
-
         if (!termsCheck) {
             this.mostrarNotificacion('Debes aceptar los Términos y Condiciones.', 'warning');
             return;
         }
-
-        const datosRegistro = {
-            nombre: nombre,
-            apellido: apellido,
-            email: email,
-            password: password
-        };
-
-        console.log('Datos a enviar:', datosRegistro);
-        console.log('URL completa:', this.BASE_URL + 'registro.php');
-
         try {
-            const submitBtn = evento.target.querySelector('button[type="submit"]');
-            const textoOriginal = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Registrando...';
-            submitBtn.disabled = true;
-
-            const response = await fetch(this.BASE_URL + 'registro.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(datosRegistro)
-            });
-
-            console.log('Response status:', response.status);
-
-            // MANEJO MEJORADO DE RESPUESTAS JSON
-            let data;
-            try {
-                const responseText = await response.text();
-                console.log('Register response text:', responseText);
-                data = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parseando JSON:', parseError);
-                submitBtn.innerHTML = textoOriginal;
-                submitBtn.disabled = false;
-                this.mostrarNotificacion('Error del servidor. Revisa la consola para más detalles.', 'danger');
-                return;
-            }
-
-            console.log('Data parsed:', data);
-
-            submitBtn.innerHTML = textoOriginal;
-            submitBtn.disabled = false;
-
+            const response = await fetch(this.BASE_URL + 'registro.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, apellido, email, password }) });
+            const data = await response.json();
             if (response.ok && data.success) {
                 this.mostrarNotificacion(data.message + ' Ahora puedes iniciar sesión.', 'success');
-                document.getElementById('formularioRegistro').reset();
                 this.dom.modalRegistro?.hide();
-
-                setTimeout(() => {
-                    this.dom.modalLogin?.show();
-                    document.getElementById('emailLogin').value = email;
-                }, 500);
-
+                this.dom.modalLogin?.show();
             } else {
-                console.error('Error del servidor:', data);
                 this.mostrarNotificacion('Error al registrar: ' + (data.message || 'Hubo un problema.'), 'danger');
             }
-
         } catch (error) {
-            console.error('Error de red completo:', error);
-            const submitBtn = evento.target.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.innerHTML = 'Crear Cuenta';
-                submitBtn.disabled = false;
-            }
-            this.mostrarNotificacion('Error de conexión. Verifica tu conexión a internet.', 'danger');
+            this.mostrarNotificacion('Ocurrió un error. Inténtalo de nuevo.', 'danger');
         }
     }
 
     async cerrarSesion() {
         try {
             const response = await fetch(this.BASE_URL + 'logout.php', { method: 'POST' });
-
-            let data;
-            try {
-                const responseText = await response.text();
-                data = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing logout JSON:', parseError);
-                // Continuar con logout local aunque falle el servidor
-                data = { success: true, message: 'Sesión cerrada localmente' };
-            }
-
+            const data = await response.json();
             if (response.ok && data.success) {
                 this.usuario = null;
                 localStorage.removeItem('usuarioViasSeguras');
@@ -941,7 +705,6 @@ class ViasSegurasApp {
                 this.mostrarNotificacion('Error al cerrar sesión: ' + (data.message || 'No se pudo.'), 'danger');
             }
         } catch (error) {
-            console.error('Error cerrando sesión:', error);
             this.mostrarNotificacion('Ocurrió un error. Inténtalo de nuevo.', 'danger');
         }
     }
@@ -957,401 +720,103 @@ class ViasSegurasApp {
     }
 
     actualizarUIUsuario() {
+        const puntosPerfil = document.getElementById('puntosUsuario');
+        const rangoPerfil = document.getElementById('rangoUsuario');
+
         if (this.usuario) {
             this.dom.botonLogin.classList.add('d-none');
             this.dom.menuUsuario.classList.remove('d-none');
             this.dom.nombreUsuario.textContent = this.usuario.nombre;
-            const nombrePerfilEl = document.getElementById('nombrePerfil');
-            const emailPerfilEl = document.getElementById('emailPerfil');
-            if (nombrePerfilEl) nombrePerfilEl.textContent = `${this.usuario.nombre} ${this.usuario.apellido}`;
-            if (emailPerfilEl) emailPerfilEl.textContent = this.usuario.email;
+            document.getElementById('nombrePerfil').textContent = `${this.usuario.nombre} ${this.usuario.apellido}`;
+            document.getElementById('emailPerfil').textContent = this.usuario.email;
 
-            this.cargarPuntosUsuario();
+            if (puntosPerfil) {
+                puntosPerfil.textContent = this.usuario.puntos_totales;
+            }
+            if (rangoPerfil) {
+                rangoPerfil.textContent = this.usuario.nombre_rango;
+            }
+
         } else {
             this.dom.botonLogin.classList.remove('d-none');
             this.dom.menuUsuario.classList.add('d-none');
-            const nombrePerfilEl = document.getElementById('nombrePerfil');
-            const emailPerfilEl = document.getElementById('emailPerfil');
-            const puntosEl = document.getElementById('puntosUsuario');
-            const rangoEl = document.getElementById('rangoUsuario');
-
-            if (nombrePerfilEl) nombrePerfilEl.textContent = 'Invitado';
-            if (emailPerfilEl) emailPerfilEl.textContent = 'Inicia sesión para ver tu perfil';
-            if (puntosEl) puntosEl.textContent = '0';
-            if (rangoEl) rangoEl.textContent = 'Novato';
+            document.getElementById('nombrePerfil').textContent = 'Invitado';
+            document.getElementById('emailPerfil').textContent = 'Inicia sesión para ver tu perfil';
+            
+            if (puntosPerfil) {
+                puntosPerfil.textContent = '0';
+            }
+            if (rangoPerfil) {
+                rangoPerfil.textContent = 'N/A';
+            }
         }
     }
 
-    async votar(idReporte, tipoVoto) {
-        if (!this.usuario) {
-            this.mostrarNotificacion('Debes iniciar sesión para votar.', 'warning');
-            return;
-        }
-
+    async cargarEstadisticas() {
         try {
-            const response = await fetch(this.BASE_URL + 'votar_reporte.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id_usuario: this.usuario.id,
-                    id_reporte: idReporte,
-                    tipo_voto: tipoVoto
-                })
+            const response = await fetch(this.BASE_URL + 'get_stats.php?t=' + new Date().getTime());
+            
+            if (!response.ok) {
+                throw new Error('No se pudieron cargar las estadísticas.');
+            }
+            const data = await response.json();
+            if (data.success) {
+                this.actualizarPanelesEstadisticas(data.stats);
+            }
+        } catch (error) {
+            console.error('Error al cargar estadísticas:', error);
+        }
+    }
+
+    actualizarPanelesEstadisticas(stats) {
+        // Actualiza los paneles de texto
+        document.getElementById('stats-urgente').textContent = stats.por_prioridad.Urgente || 0;
+        document.getElementById('stats-precaucion').textContent = stats.por_prioridad.Precaucion || 0;
+        document.getElementById('stats-info').textContent = stats.por_prioridad.Informacion || 0;
+        const zonasContainer = document.getElementById('stats-zonas-incidencia');
+        zonasContainer.innerHTML = '';
+        const topProvincias = stats.por_provincia.slice(0, 3);
+        if (topProvincias.length > 0) {
+            topProvincias.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `${item.provincia}: <span class="badge bg-primary">${item.total}</span>`;
+                zonasContainer.appendChild(li);
             });
-
-            let result;
-            try {
-                const responseText = await response.text();
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing vote JSON:', parseError);
-                this.mostrarNotificacion('Error del servidor al votar.', 'danger');
-                return;
-            }
-
-            if (result.success) {
-                this.mostrarNotificacion(result.message, 'success');
-                this.actualizarContadoresVoto(idReporte, result.votos_positivos, result.votos_negativos);
+        } else {
+            zonasContainer.innerHTML = '<li>No hay datos de incidencia.</li>';
+        }
+        const resumen = stats.resumen_nacional;
+        if (resumen) {
+            document.getElementById('totalNacional').textContent = resumen.total_hoy || 0;
+            document.getElementById('provinciasAfectadas').textContent = resumen.provincias_afectadas || 0;
+            const nivelAlertaEl = document.getElementById('nivelAlerta');
+            nivelAlertaEl.textContent = resumen.nivel_alerta || 'Bajo';
+            nivelAlertaEl.className = 'badge';
+            if (resumen.nivel_alerta === 'Alto') {
+                nivelAlertaEl.classList.add('bg-danger');
+            } else if (resumen.nivel_alerta === 'Moderado') {
+                nivelAlertaEl.classList.add('bg-warning');
             } else {
-                this.mostrarNotificacion('Error: ' + result.message, 'danger');
+                nivelAlertaEl.classList.add('bg-success');
             }
-        } catch (error) {
-            console.error('Error votando:', error);
-            this.mostrarNotificacion('Error de red al votar.', 'danger');
-        }
-    }
-
-    async informarReporte(idReporte, motivo, descripcion = '') {
-        if (!this.usuario) {
-            this.mostrarNotificacion('Debes iniciar sesión para reportar.', 'warning');
-            return;
         }
 
-        try {
-            const response = await fetch(this.BASE_URL + 'informar_reporte.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id_usuario: this.usuario.id,
-                    id_reporte: idReporte,
-                    motivo: motivo,
-                    descripcion: descripcion
-                })
-            });
-
-            let result;
-            try {
-                const responseText = await response.text();
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing report JSON:', parseError);
-                this.mostrarNotificacion('Error del servidor al informar.', 'danger');
-                return;
-            }
-
-            if (result.success) {
-                this.mostrarNotificacion(result.message, 'success');
-            } else {
-                this.mostrarNotificacion('Error: ' + result.message, 'danger');
-            }
-        } catch (error) {
-            console.error('Error informando:', error);
-            this.mostrarNotificacion('Error de red al informar.', 'danger');
+        // ==================== INICIO DE LA MODIFICACIÓN #4 ====================
+        // Se añade la lógica para actualizar el gráfico con los nuevos datos
+        if (this.graficoPrioridades) {
+            this.graficoPrioridades.data.datasets[0].data = [
+                stats.por_prioridad.Urgente || 0,
+                stats.por_prioridad.Precaucion || 0,
+                stats.por_prioridad.Informacion || 0
+            ];
+            this.graficoPrioridades.update(); // Vuelve a dibujar el gráfico
         }
+        // ==================== FIN DE LA MODIFICACIÓN #4 ====================
     }
 
-    async cargarPuntosUsuario() {
-        if (!this.usuario) return;
-
-        try {
-            const response = await fetch(this.BASE_URL + `get_user_points.php?id_usuario=${this.usuario.id}`);
-
-            let result;
-            try {
-                const responseText = await response.text();
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing points JSON:', parseError);
-                return;
-            }
-
-            if (result.success) {
-                this.actualizarInterfazPuntos(result.data);
-            }
-        } catch (error) {
-            console.error('Error al cargar puntos:', error);
-        }
-    }
-
-    actualizarInterfazPuntos(data) {
-        const puntosElement = document.getElementById('puntosUsuario');
-        const rangoElement = document.getElementById('rangoUsuario');
-
-        if (puntosElement) puntosElement.textContent = data.puntos;
-        if (rangoElement) rangoElement.textContent = data.rango_actual;
-
-        if (this.usuario) {
-            this.usuario.puntos = data.puntos;
-            this.usuario.user_rank = data.rango_actual;
-            localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
-        }
-    }
-
-    actualizarContadoresVoto(idReporte, votosPositivos, votosNegativos) {
-        const reporteElement = document.querySelector(`[data-reporte-id="${idReporte}"]`);
-        if (reporteElement) {
-            const positiveBtn = reporteElement.querySelector('.btn-voto-positivo');
-            const negativeBtn = reporteElement.querySelector('.btn-voto-negativo');
-
-            if (positiveBtn) positiveBtn.textContent = `👍 ${votosPositivos}`;
-            if (negativeBtn) negativeBtn.textContent = `👎 ${votosNegativos}`;
-        }
-    }
-
-    async crearIncidenteEnMapa(latitud, longitud, descripcion, prioridad = 'info', tipoIncidente = 6) {
-        if (!this.usuario) {
-            this.mostrarNotificacion('Debes iniciar sesión para crear incidentes.', 'warning');
-            return;
-        }
-
-        try {
-            const response = await fetch(this.BASE_URL + 'get_map_incidents.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id_usuario: this.usuario.id,
-                    descripcion: descripcion,
-                    latitud: latitud,
-                    longitud: longitud,
-                    prioridad: prioridad,
-                    id_tipo_incidente: tipoIncidente
-                })
-            });
-
-            let result;
-            try {
-                const responseText = await response.text();
-                result = JSON.parse(responseText);
-            } catch (parseError) {
-                console.error('Error parsing incident JSON:', parseError);
-                this.mostrarNotificacion('Error del servidor al crear incidente.', 'danger');
-                return;
-            }
-
-            if (result.success) {
-                this.mostrarNotificacion(result.message, 'success');
-                this.cargarDatosIniciales();
-                this.cargarPuntosUsuario();
-            } else {
-                this.mostrarNotificacion('Error: ' + result.message, 'danger');
-            }
-        } catch (error) {
-            console.error('Error creando incidente:', error);
-            this.mostrarNotificacion('Error de red al crear incidente.', 'danger');
-        }
-    }
-
-    obtenerBadgeEstado(estado) {
-        switch (estado) {
-            case 'confiable':
-                return '<span class="badge bg-success">✓ Confiable</span>';
-            case 'dudoso':
-                return '<span class="badge bg-danger">⚠ Dudoso</span>';
-            case 'bajo_revision':
-                return '<span class="badge bg-warning">👁 En revisión</span>';
-            default:
-                return '';
-        }
-    }
-
-    mostrarModalInforme(idReporte) {
-        const modalHTML = `
-           <div class="modal fade" id="modalInforme" tabindex="-1">
-               <div class="modal-dialog">
-                   <div class="modal-content">
-                       <div class="modal-header">
-                           <h5 class="modal-title">Informar Reporte</h5>
-                           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                       </div>
-                       <div class="modal-body">
-                           <form id="formInforme">
-                               <div class="mb-3">
-                                   <label class="form-label">Motivo del informe</label>
-                                   <select class="form-select" id="motivoInforme" required>
-                                       <option value="">Seleccionar motivo...</option>
-                                       <option value="spam">Spam</option>
-                                       <option value="contenido_inapropiado">Contenido inapropiado</option>
-                                       <option value="informacion_falsa">Información falsa</option>
-                                       <option value="duplicado">Reporte duplicado</option>
-                                       <option value="otro">Otro</option>
-                                   </select>
-                               </div>
-                               <div class="mb-3">
-                                   <label class="form-label">Descripción adicional (opcional)</label>
-                                   <textarea class="form-control" id="descripcionInforme" rows="3"></textarea>
-                               </div>
-                           </form>
-                       </div>
-                       <div class="modal-footer">
-                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                           <button type="button" class="btn btn-warning" onclick="window.app.enviarInforme(${idReporte})">Enviar Informe</button>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       `;
-
-        const modalAnterior = document.getElementById('modalInforme');
-        if (modalAnterior) modalAnterior.remove();
-
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        const modal = new bootstrap.Modal(document.getElementById('modalInforme'));
-        modal.show();
-    }
-
-    async enviarInforme(idReporte) {
-        const motivo = document.getElementById('motivoInforme').value;
-        const descripcion = document.getElementById('descripcionInforme').value;
-
-        if (!motivo) {
-            this.mostrarNotificacion('Debes seleccionar un motivo.', 'warning');
-            return;
-        }
-
-        await this.informarReporte(idReporte, motivo, descripcion);
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalInforme'));
-        modal.hide();
-    }
-
-    mostrarModalCrearIncidente(lat, lng) {
-        const modalHTML = `
-           <div class="modal fade" id="modalCrearIncidente" tabindex="-1">
-               <div class="modal-dialog">
-                   <div class="modal-content">
-                       <div class="modal-header">
-                           <h5 class="modal-title">Crear Incidente</h5>
-                           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                       </div>
-                       <div class="modal-body">
-                           <form id="formCrearIncidente">
-                               <div class="mb-3">
-                                   <label class="form-label">Ubicación</label>
-                                   <input type="text" class="form-control" value="Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}" readonly>
-                               </div>
-                               <div class="mb-3">
-                                   <label class="form-label">Descripción</label>
-                                   <textarea class="form-control" id="descripcionIncidente" rows="3" required placeholder="Describe el incidente..."></textarea>
-                               </div>
-                               <div class="mb-3">
-                                   <label class="form-label">Prioridad</label>
-                                   <select class="form-select" id="prioridadIncidente">
-                                       <option value="info">Información</option>
-                                       <option value="precaucion">Precaución</option>
-                                       <option value="urgente">Urgente</option>
-                                   </select>
-                               </div>
-                               <div class="mb-3">
-                                   <label class="form-label">Tipo de Incidente</label>
-                                   <select class="form-select" id="tipoIncidente">
-                                       <option value="1">Accidente de Tránsito</option>
-                                       <option value="2">Emergencia Médica</option>
-                                       <option value="3">Bloqueo de Vía</option>
-                                       <option value="4">Condiciones Climáticas</option>
-                                       <option value="5">Obra en Construcción</option>
-                                       <option value="6">Otro</option>
-                                   </select>
-                               </div>
-                           </form>
-                       </div>
-                       <div class="modal-footer">
-                           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                           <button type="button" class="btn btn-primary" onclick="window.app.confirmarCrearIncidente(${lat}, ${lng})">Crear Incidente</button>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       `;
-
-        const modalAnterior = document.getElementById('modalCrearIncidente');
-        if (modalAnterior) modalAnterior.remove();
-
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        const modal = new bootstrap.Modal(document.getElementById('modalCrearIncidente'));
-        modal.show();
-    }
-
-    async confirmarCrearIncidente(lat, lng) {
-        const descripcion = document.getElementById('descripcionIncidente').value;
-        const prioridad = document.getElementById('prioridadIncidente').value;
-        const tipo = document.getElementById('tipoIncidente').value;
-
-        if (!descripcion.trim()) {
-            this.mostrarNotificacion('La descripción es obligatoria.', 'warning');
-            return;
-        }
-
-        await this.crearIncidenteEnMapa(lat, lng, descripcion, prioridad, parseInt(tipo));
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearIncidente'));
-        modal.hide();
-
-        this.modoCreacionIncidente = false;
-        const controlBtn = document.querySelector('.leaflet-control-custom');
-        if (controlBtn) {
-            controlBtn.style.backgroundColor = 'white';
-            controlBtn.style.color = 'black';
-        }
-    }
-
-    mostrarNotificacion(mensaje, tipo = 'info') {
-        const colores = { success: '#198754', info: '#0dcaf0', warning: '#ffc107', danger: '#dc3545' };
-        const notificacion = document.createElement('div');
-        notificacion.style.cssText = `position: fixed; top: 80px; right: -300px; background-color: ${colores[tipo]}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; transition: right 0.5s ease-in-out;`;
-        notificacion.textContent = mensaje;
-        document.body.appendChild(notificacion);
-        setTimeout(() => { notificacion.style.right = '20px'; }, 100);
-        setTimeout(() => {
-            notificacion.style.right = '-300px';
-            setTimeout(() => notificacion.remove(), 500);
-        }, 3000);
-    }
+    mostrarNotificacion(mensaje, tipo = 'info') { /* ... */ }
 }
 
-// Variable global para acceder a la app desde onclick
-window.app = null;
-
 document.addEventListener('DOMContentLoaded', () => {
-    window.app = new ViasSegurasApp();
+    new ViasSegurasApp();
 });
-
-// Desplazamiento suave
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        if (this.hasAttribute('data-bs-toggle') && this.getAttribute('data-bs-toggle') === 'modal') {
-            return;
-        }
-        e.preventDefault();
-        const href = this.getAttribute('href');
-
-        if (!href || href === '#') {
-            return;
-        }
-        const target = document.querySelector(href);
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Limpiar alertas después de 5 segundos
-setTimeout(function () {
-    document.querySelectorAll('.alert').forEach(function (alert) {
-        if (alert.classList.contains('show')) {
-            bootstrap.Alert.getOrCreateInstance(alert).close();
-        }
-    });
-}, 5000);
