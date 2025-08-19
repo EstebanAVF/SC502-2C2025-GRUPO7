@@ -205,7 +205,8 @@
                                     <h6 class="mb-3">Reportes por Prioridad (Últimas 24h)</h6>
                                     <ul class="list-unstyled">
                                         <li>🚨 Urgente: <span id="stats-urgente" class="badge bg-danger">0</span></li>
-                                        <li>⚠️ Precaución: <span id="stats-precaucion" class="badge bg-warning">0</span></li>
+                                        <li>⚠️ Precaución: <span id="stats-precaucion" class="badge bg-warning">0</span>
+                                        </li>
                                         <li>ℹ️ Información: <span id="stats-info" class="badge bg-info">0</span></li>
                                     </ul>
                                 </div>
@@ -220,17 +221,9 @@
                         </div>
 
                         <h3 class="mb-3">Análisis de Tendencias</h3>
-                        <p class="texto-muted">Gráficos de ejemplo de tendencias (futura implementación con librerías de
-                            gráficos).</p>
+                        <p class="texto-muted">Distribución de todos los reportes recibidos según su prioridad.</p>
                         <div class="tarjeta-info mb-4">
-                            <h6 class="mb-2">Incidentes Semanales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Gráfico+Semanal" alt="Gráfico Semanal"
-                                class="img-fluid rounded">
-                        </div>
-                        <div class="tarjeta-info">
-                            <h6 class="mb-2">Incidentes Mensuales</h6>
-                            <img src="https://via.placeholder.com/400x150?text=Gráfico+Mensual" alt="Gráfico Mensual"
-                                class="img-fluid rounded">
+                            <canvas id="graficoPrioridades"></canvas>
                         </div>
                     </div>
                 </section>
@@ -265,20 +258,22 @@
                     <div class="filtros-adicionales mt-4">
                         <h6 class="mb-3">Filtrar por tipo</h6>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroUrgente" data-filtro="urgente" checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroUrgente"
+                                data-filtro="urgente" checked>
                             <label class="form-check-label" for="filtroUrgente">
                                 <span class="badge-filtro urgente">Urgente</span>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroPrecaucion" data-filtro="precaucion"
-                                checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroPrecaucion"
+                                data-filtro="precaucion" checked>
                             <label class="form-check-label" for="filtroPrecaucion">
                                 <span class="badge-filtro precaucion">Precaución</span>
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroInfo" data-filtro="info" checked>
+                            <input class="form-check-input filtro-tipo" type="checkbox" id="filtroInfo"
+                                data-filtro="info" checked>
                             <label class="form-check-label" for="filtroInfo">
                                 <span class="badge-filtro info">Información</span>
                             </label>
@@ -323,87 +318,6 @@
         </div>
     </section>
 
-    <div class="modal fade" id="modalLogin" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title">Iniciar Sesión</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formularioLogin">
-                        <div class="mb-3">
-                            <label for="emailLogin" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="emailLogin" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordLogin" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordLogin" required>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary custom-btn-primary">Ingresar</button>
-                        </div>
-                        <hr class="my-3">
-                        <p class="text-center mb-0">
-                            ¿No tienes cuenta?
-                            <a href="#" class="custom-link" data-bs-toggle="modal" data-bs-target="#modalRegistro"
-                                data-bs-dismiss="modal">Regístrate</a>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalRegistro" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content custom-modal-content">
-                <div class="modal-header custom-modal-header">
-                    <h5 class="modal-title">Registrarse</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="formularioRegistro">
-                        <div class="mb-3">
-                            <label for="nombreRegistro" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombreRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellidoRegistro" class="form-label">Apellido</label> <input type="text"
-                                class="form-control" id="apellidoRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="emailRegistro" class="form-label">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="emailRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="passwordRegistro" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordRegistro" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPasswordRegistro" class="form-label">Confirmar Contraseña</label>
-                            <input type="password" class="form-control" id="confirmPasswordRegistro" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input class="form-check-input" type="checkbox" id="termsCheckRegistro" required> <label
-                                class="form-check-label" for="termsCheckRegistro">Acepto los <a href="#"
-                                    class="custom-link">Términos y Condiciones</a></label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary custom-btn-primary">Crear Cuenta</button>
-                        </div>
-                        <hr class="my-3">
-                        <p class="text-center mb-0">
-                            ¿Ya tienes cuenta?
-                            <a href="#" class="custom-link" data-bs-toggle="modal" data-bs-target="#modalLogin"
-                                data-bs-dismiss="modal">Inicia Sesión</a>
-                        </p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <footer class="pie-pagina">
         <div class="container">
             <div class="row">
@@ -420,6 +334,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="scripts.js"></script>
 </body>
 

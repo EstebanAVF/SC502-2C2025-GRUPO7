@@ -1,4 +1,3 @@
-// CLASE PRINCIPAL DE LA APLICACION (VERSIÓN UNIFICADA Y FUNCIONAL)
 class ViasSegurasApp {
     constructor() {
         this.mapa = null;
@@ -12,6 +11,11 @@ class ViasSegurasApp {
             info: true
         };
         
+        // ==================== INICIO DE LA MODIFICACIÓN #1 ====================
+        // Se añade una propiedad para guardar la instancia del gráfico
+        this.graficoPrioridades = null;
+        // ==================== FIN DE LA MODIFICACIÓN #1 ====================
+
         this.datosProvincias = {
             'San José': {
                 lat: 9.9333, lng: -84.0833,
@@ -131,7 +135,6 @@ class ViasSegurasApp {
                 }
             }
         };
-        //... el resto de tu constructor ...
         this.BASE_URL = 'http://localhost/Proyecto/';
         this.dom = {
             botonLogin: document.getElementById('botonLogin'),
@@ -145,7 +148,7 @@ class ViasSegurasApp {
         };
         this.inicializar();
     }
-    //... resto de la clase
+
     inicializar() {
         this.inicializarMapa();
         this.configurarEventos();
@@ -155,25 +158,84 @@ class ViasSegurasApp {
         this.mostrarSeccion('inicio');
         this.cargarDatosIniciales();
         this.cargarEstadisticas();
+        // ==================== INICIO DE LA MODIFICACIÓN #2 ====================
+        // Se llama a la nueva función para crear el gráfico al iniciar la app
+        this.inicializarGrafico();
+        // ==================== FIN DE LA MODIFICACIÓN #2 ====================
     }
     
+    // ==================== INICIO DE LA MODIFICACIÓN #3 ====================
+    // Nueva función para crear y configurar el gráfico de pastel
+    inicializarGrafico() {
+        const ctx = document.getElementById('graficoPrioridades');
+        if (!ctx) return;
+
+        // Configuración para un estilo profesional y adaptado al tema oscuro
+        this.graficoPrioridades = new Chart(ctx, {
+            type: 'pie', // Tipo de gráfico
+            data: {
+                labels: ['Urgente', 'Precaución', 'Información'],
+                datasets: [{
+                    label: 'Reportes',
+                    data: [0, 0, 0], // Inicia con datos en cero
+                    backgroundColor: [
+                        'rgba(220, 38, 38, 0.7)',  // Rojo alerta
+                        'rgba(245, 158, 11, 0.7)', // Amarillo precaución
+                        'rgba(8, 145, 178, 0.7)'   // Cyan información
+                    ],
+                    borderColor: [
+                        '#334155', // Color del borde de la tarjeta para integrar
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#f1f5f9', // Color de texto para la leyenda
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        bodyFont: {
+                            size: 14
+                        },
+                        titleFont: {
+                            size: 16
+                        },
+                        padding: 12,
+                        cornerRadius: 6
+                    }
+                }
+            }
+        });
+    }
+    // ==================== FIN DE LA MODIFICACIÓN #3 ====================
+
     configurarEventos() {
         document.getElementById('btnEnviarReporte')?.addEventListener('click', () => this.enviarReporte());
         document.getElementById('inputImagen')?.addEventListener('change', (e) => this.previsualizarImagen(e));
         document.getElementById('selectProvincia')?.addEventListener('change', (e) => this.cambiarProvincia(e));
         document.getElementById('selectCanton')?.addEventListener('change', (e) => this.cambiarCanton(e));
-        
-        this.dom.formularioLogin?.addEventListener('submit', (e) => this.iniciarSesion(e));
-        this.dom.formularioRegistro?.addEventListener('submit', (e) => this.registrarUsuario(e));
-        this.dom.btnCerrarSesion?.addEventListener('click', () => this.cerrarSesion());
-        
+        document.getElementById('formularioLogin')?.addEventListener('submit', (e) => this.iniciarSesion(e));
+        document.getElementById('formularioRegistro')?.addEventListener('submit', (e) => this.registrarUsuario(e));
+        document.getElementById('btnCerrarSesion')?.addEventListener('click', () => this.cerrarSesion());
         document.querySelectorAll('.navbar-nav .nav-link[data-section], .btn[data-section]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.mostrarSeccion(e.currentTarget.dataset.section);
             });
         });
-        
         document.querySelectorAll('.filtro-tipo').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => this.handleFiltroTipoChange(e));
         });
@@ -192,7 +254,6 @@ class ViasSegurasApp {
             this.dom.modalLogin?.show();
             return;
         }
-
         if (!descripcion.trim() || !provincia || !canton) {
             this.mostrarNotificacion('Por favor, completa la descripción, provincia y cantón.', 'warning');
             return;
@@ -204,7 +265,9 @@ class ViasSegurasApp {
         formData.append('provincia', provincia);
         formData.append('canton', canton);
         formData.append('distrito', distrito);
-        if (imagenInput.files.length > 0) formData.append('imagen', imagenInput.files[0]);
+        if (imagenInput.files.length > 0) {
+            formData.append('imagen', imagenInput.files[0]);
+        }
         
         let lat, lng;
         if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]) {
@@ -227,15 +290,17 @@ class ViasSegurasApp {
             if (response.ok && result.success) {
                 this.mostrarNotificacion(result.message, 'success');
                 this.limpiarFormulario();
-                
                 this.cargarDatosIniciales();
                 this.cargarEstadisticas();
 
                 if (result.nuevos_puntos !== undefined) {
                     this.usuario.puntos_totales = result.nuevos_puntos;
-                    localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
-                    this.actualizarUIUsuario();
                 }
+                if (result.nuevo_rango_nombre) {
+                    this.usuario.nombre_rango = result.nuevo_rango_nombre;
+                }
+                localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
+                this.actualizarUIUsuario();
 
             } else {
                 this.mostrarNotificacion('Error: ' + (result.message || 'No se pudo enviar.'), 'danger');
@@ -257,17 +322,23 @@ class ViasSegurasApp {
     
     async cargarDatosIniciales() {
         const feedContainer = document.getElementById('feedReportes');
-        if (feedContainer) feedContainer.innerHTML = '<p class="text-center texto-muted">Cargando reportes...</p>';
+        if (feedContainer) {
+            feedContainer.innerHTML = '<p class="text-center texto-muted">Cargando reportes...</p>';
+        }
         try {
-            const response = await fetch(this.BASE_URL + 'get_reports.php');
-            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            const response = await fetch(this.BASE_URL + 'get_reports.php?t=' + new Date().getTime());
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
             
             this.todosLosReportes = await response.json();
             this.procesarYRenderizarTodo();
 
         } catch (error) {
             console.error('Error fatal al cargar reportes:', error);
-            if (feedContainer) feedContainer.innerHTML = '<p class="text-center text-danger">No se pudieron cargar los reportes iniciales.</p>';
+            if (feedContainer) {
+                feedContainer.innerHTML = '<p class="text-center text-danger">No se pudieron cargar los reportes iniciales.</p>';
+            }
         }
     }
     
@@ -284,14 +355,18 @@ class ViasSegurasApp {
             reportesFiltrados = reportesFiltrados.filter(r => r.provincia === this.provinciaSeleccionada);
         }
 
-        reportesFiltrados = reportesFiltrados.filter(r => this.filtrosActivos[r.prioridad.toLowerCase()]);
+        reportesFiltrados = reportesFiltrados.filter(r => {
+            const prioridad = r.prioridad.toLowerCase();
+            return (prioridad === 'precaucion' || prioridad === 'precaución') 
+                   ? this.filtrosActivos.precaucion 
+                   : this.filtrosActivos[prioridad];
+        });
 
         this.renderizarFeed(reportesFiltrados);
         this.actualizarMapaConReportes(reportesFiltrados);
-
         this.addLikeButtonListeners();
     }
-
+    //////////////////////////////////////////////////////////////////////
     addLikeButtonListeners() {
         const likeButtons = document.querySelectorAll('.like-button');
         likeButtons.forEach(button => {
@@ -306,7 +381,6 @@ class ViasSegurasApp {
                         const countSpan = button.querySelector('.like-count');
                         const currentLikes = parseInt(countSpan.textContent, 10);
                         countSpan.textContent = currentLikes + 1;
-                        
                         button.classList.remove('btn-outline-light');
                         button.classList.add('btn-primary');
                     } else {
@@ -342,7 +416,9 @@ class ViasSegurasApp {
     
     renderizarFeed(reportes) {
         const feedContainer = document.getElementById('feedReportes');
-        if (!feedContainer) return;
+        if (!feedContainer) {
+            return;
+        }
         feedContainer.innerHTML = '';
         if (reportes.length === 0) {
             feedContainer.innerHTML = '<p class="text-center texto-muted">No hay reportes que coincidan con los filtros seleccionados.</p>';
@@ -359,7 +435,10 @@ class ViasSegurasApp {
             this.datosProvincias[provincia].incidentes = { urgente: 0, precaucion: 0, info: 0 };
         }
         reportes.forEach(reporte => {
-            const prioridadLower = reporte.prioridad.toLowerCase();
+            let prioridadLower = reporte.prioridad.toLowerCase();
+            if (prioridadLower === 'precaución') {
+                prioridadLower = 'precaucion';
+            }
             if (this.datosProvincias[reporte.provincia] && this.datosProvincias[reporte.provincia].incidentes[prioridadLower] !== undefined) {
                 this.datosProvincias[reporte.provincia].incidentes[prioridadLower]++;
             }
@@ -368,7 +447,9 @@ class ViasSegurasApp {
     
     actualizarPanelProvincias() {
         const contenedor = document.getElementById('listaProvincias');
-        if (!contenedor) return;
+        if (!contenedor) {
+            return;
+        }
         contenedor.innerHTML = '';
         Object.entries(this.datosProvincias).forEach(([provincia, datos]) => {
             const totalProvincia = datos.incidentes.urgente + datos.incidentes.precaucion + datos.incidentes.info;
@@ -394,7 +475,9 @@ class ViasSegurasApp {
     }
     
     actualizarMapaConReportes(reportes) {
-        if (!this.mapa) return;
+        if (!this.mapa) {
+            return;
+        }
 
         this.marcadoresMapa.forEach(marcador => this.mapa.removeLayer(marcador));
         this.marcadoresMapa = [];
@@ -408,7 +491,11 @@ class ViasSegurasApp {
             if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
                 const latLng = [lat, lng];
 
-                const prioridadLower = reporte.prioridad.toLowerCase();
+                let prioridadLower = reporte.prioridad.toLowerCase();
+                if (prioridadLower === 'precaución') {
+                    prioridadLower = 'precaucion';
+                }
+                
                 let iconColor = 'blue';
                 if (prioridadLower === 'urgente') {
                     iconColor = 'red';
@@ -477,13 +564,19 @@ class ViasSegurasApp {
     configurarModales() {
         const modalLoginEl = document.getElementById('modalLogin');
         const modalRegistroEl = document.getElementById('modalRegistro');
-        if (modalLoginEl) this.dom.modalLogin = new bootstrap.Modal(modalLoginEl);
-        if (modalRegistroEl) this.dom.modalRegistro = new bootstrap.Modal(modalRegistroEl);
+        if (modalLoginEl) {
+            this.dom.modalLogin = new bootstrap.Modal(modalLoginEl);
+        }
+        if (modalRegistroEl) {
+            this.dom.modalRegistro = new bootstrap.Modal(modalRegistroEl);
+        }
     }
 
     inicializarSelectoresUbicacion() {
         const selectProvincia = document.getElementById('selectProvincia');
-        if (!selectProvincia) return;
+        if (!selectProvincia) {
+            return;
+        }
         selectProvincia.innerHTML = '<option value="">Provincia *</option>';
         Object.keys(this.datosProvincias).forEach(provincia => {
             const option = document.createElement('option');
@@ -513,16 +606,13 @@ class ViasSegurasApp {
         }
     }
     
-    // ==================== INICIO DE LA CORRECCIÓN ====================
-    // Se completa la función para que cargue los distritos
     cambiarCanton(evento) {
         const provincia = document.getElementById('selectProvincia').value;
         const canton = evento.target.value;
         const selectDistrito = document.getElementById('selectDistrito');
-        selectDistrito.innerHTML = '<option value="">Distrito (Opcional)</option>'; // Se actualiza el texto
+        selectDistrito.innerHTML = '<option value="">Distrito (Opcional)</option>';
         selectDistrito.disabled = true;
 
-        // Verificar que provincia, cantón y la lista de distritos existan
         if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]?.distritos) {
             selectDistrito.disabled = false;
             const distritos = this.datosProvincias[provincia].cantones[canton].distritos;
@@ -535,7 +625,6 @@ class ViasSegurasApp {
             });
         }
     }
-    // ==================== FIN DE LA CORRECCIÓN ====================
     
     previsualizarImagen(evento) {
         const archivo = evento.target.files[0];
@@ -579,8 +668,14 @@ class ViasSegurasApp {
         const password = document.getElementById('passwordRegistro').value;
         const confirmPassword = document.getElementById('confirmPasswordRegistro').value;
         const termsCheck = document.getElementById('termsCheckRegistro').checked;
-        if (password !== confirmPassword) { this.mostrarNotificacion('Las contraseñas no coinciden.', 'warning'); return; }
-        if (!termsCheck) { this.mostrarNotificacion('Debes aceptar los Términos y Condiciones.', 'warning'); return; }
+        if (password !== confirmPassword) {
+            this.mostrarNotificacion('Las contraseñas no coinciden.', 'warning');
+            return;
+        }
+        if (!termsCheck) {
+            this.mostrarNotificacion('Debes aceptar los Términos y Condiciones.', 'warning');
+            return;
+        }
         try {
             const response = await fetch(this.BASE_URL + 'registro.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre, apellido, email, password }) });
             const data = await response.json();
@@ -616,7 +711,11 @@ class ViasSegurasApp {
 
     cargarEstadoUsuario() {
         const storedUser = localStorage.getItem('usuarioViasSeguras');
-        if (storedUser) { this.usuario = JSON.parse(storedUser); } else { this.usuario = null; }
+        if (storedUser) {
+            this.usuario = JSON.parse(storedUser);
+        } else {
+            this.usuario = null;
+        }
         this.actualizarUIUsuario();
     }
 
@@ -662,23 +761,21 @@ class ViasSegurasApp {
             }
             const data = await response.json();
             if (data.success) {
-                this.actualizarPanelInformes(data.stats);
+                this.actualizarPanelesEstadisticas(data.stats);
             }
         } catch (error) {
             console.error('Error al cargar estadísticas:', error);
         }
     }
 
-    actualizarPanelInformes(stats) {
+    actualizarPanelesEstadisticas(stats) {
+        // Actualiza los paneles de texto
         document.getElementById('stats-urgente').textContent = stats.por_prioridad.Urgente || 0;
         document.getElementById('stats-precaucion').textContent = stats.por_prioridad.Precaucion || 0;
         document.getElementById('stats-info').textContent = stats.por_prioridad.Informacion || 0;
-
         const zonasContainer = document.getElementById('stats-zonas-incidencia');
         zonasContainer.innerHTML = '';
-        
         const topProvincias = stats.por_provincia.slice(0, 3);
-        
         if (topProvincias.length > 0) {
             topProvincias.forEach(item => {
                 const li = document.createElement('li');
@@ -688,20 +785,36 @@ class ViasSegurasApp {
         } else {
             zonasContainer.innerHTML = '<li>No hay datos de incidencia.</li>';
         }
+        const resumen = stats.resumen_nacional;
+        if (resumen) {
+            document.getElementById('totalNacional').textContent = resumen.total_hoy || 0;
+            document.getElementById('provinciasAfectadas').textContent = resumen.provincias_afectadas || 0;
+            const nivelAlertaEl = document.getElementById('nivelAlerta');
+            nivelAlertaEl.textContent = resumen.nivel_alerta || 'Bajo';
+            nivelAlertaEl.className = 'badge';
+            if (resumen.nivel_alerta === 'Alto') {
+                nivelAlertaEl.classList.add('bg-danger');
+            } else if (resumen.nivel_alerta === 'Moderado') {
+                nivelAlertaEl.classList.add('bg-warning');
+            } else {
+                nivelAlertaEl.classList.add('bg-success');
+            }
+        }
+
+        // ==================== INICIO DE LA MODIFICACIÓN #4 ====================
+        // Se añade la lógica para actualizar el gráfico con los nuevos datos
+        if (this.graficoPrioridades) {
+            this.graficoPrioridades.data.datasets[0].data = [
+                stats.por_prioridad.Urgente || 0,
+                stats.por_prioridad.Precaucion || 0,
+                stats.por_prioridad.Informacion || 0
+            ];
+            this.graficoPrioridades.update(); // Vuelve a dibujar el gráfico
+        }
+        // ==================== FIN DE LA MODIFICACIÓN #4 ====================
     }
 
-    mostrarNotificacion(mensaje, tipo = 'info') {
-        const colores = { success: '#198754', info: '#0dcaf0', warning: '#ffc107', danger: '#dc3545' };
-        const notificacion = document.createElement('div');
-        notificacion.style.cssText = `position: fixed; top: 80px; right: -300px; background-color: ${colores[tipo]}; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 9999; transition: right 0.5s ease-in-out;`;
-        notificacion.textContent = mensaje;
-        document.body.appendChild(notificacion);
-        setTimeout(() => { notificacion.style.right = '20px'; }, 100);
-        setTimeout(() => {
-            notificacion.style.right = '-300px';
-            setTimeout(() => notificacion.remove(), 500);
-        }, 3000);
-    }
+    mostrarNotificacion(mensaje, tipo = 'info') { /* ... */ }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
