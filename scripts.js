@@ -12,8 +12,126 @@ class ViasSegurasApp {
             info: true
         };
         
-        this.datosProvincias = { 'San José': { lat: 9.9333, lng: -84.0833, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'San José': ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián'], 'Escazú': ['Escazú', 'San Antonio', 'San Rafael'], 'Desamparados': ['Desamparados', 'San Miguel', 'San Juan de Dios', 'San Rafael Arriba', 'San Antonio', 'Frailes', 'Patarrá'], 'Moravia': ['San Vicente', 'San Jerónimo', 'Trinidad'], 'Goicoechea': ['Guadalupe', 'San Francisco', 'Calle Blancos', 'Mata de Plátano', 'Ipís', 'Rancho Redondo', 'Purral'], 'Santa Ana': ['Santa Ana', 'Salitral', 'Pozos', 'Uruca', 'Piedades', 'Brasil'], 'Alajuelita': ['Alajuelita', 'San Josecito', 'San Antonio', 'Concepción', 'San Felipe'] } }, 'Alajuela': { lat: 10.0162, lng: -84.2163, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Alajuela': ['Alajuela', 'San José', 'Carrizal', 'San Antonio', 'Guácima', 'San Isidro', 'Sabanilla', 'San Rafael', 'Río Segundo', 'Desamparados', 'Turrúcares', 'Tambor', 'Garita', 'Sarapiquí'], 'San Ramón': ['San Ramón', 'Santiago', 'San Juan', 'Piedades Norte', 'Piedades Sur', 'San Rafael', 'San Isidro', 'Ángeles', 'Alfaro', 'Volio', 'Concepción'], 'Grecia': ['Grecia', 'San Isidro', 'San José', 'San Roque', 'Tacares', 'Puente de Piedra', 'Bolívar'], 'San Carlos': ['Quesada', 'Florencia', 'Buenavista', 'Aguas Zarcas', 'Venecia', 'Pital', 'La Fortuna', 'La Tigra', 'La Palmera', 'Venado', 'Cutris', 'Monterrey', 'Pocosol'] } }, 'Cartago': { lat: 9.8634, lng: -83.9194, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Cartago': ['Oriental', 'Occidental', 'Carmen', 'San Nicolás', 'Aguacaliente', 'Guadalupe', 'Corralillo', 'Tierra Blanca', 'Dulce Nombre', 'Llano Grande', 'Quebradilla'], 'Paraíso': ['Paraíso', 'Santiago', 'Orosi', 'Cachí', 'Llanos de Santa Lucía'], 'La Unión': ['Tres Ríos', 'San Diego', 'San Juan', 'San Rafael', 'Concepción', 'Dulce Nombre', 'San Ramón', 'Río Azul'], 'Turrialba': ['Turrialba', 'La Suiza', 'Peralta', 'Santa Cruz', 'Santa Teresita', 'Pavones', 'Tuis', 'Tayutic', 'Santa Rosa', 'Tres Equis'] } }, 'Heredia': { lat: 10.0024, lng: -84.1165, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Heredia': ['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'], 'Barva': ['Barva', 'San Pedro', 'San Pablo', 'San Roque', 'Santa Lucía', 'San José de la Montaña'], 'Santo Domingo': ['Santo Domingo', 'San Vicente', 'San Miguel', 'Paracito', 'Santo Tomás', 'Santa Rosa', 'Tures', 'Pará'], 'San Rafael': ['San Rafael', 'San Josecito', 'Santiago', 'Ángeles', 'Concepción'], 'San Isidro': ['San Isidro', 'San José', 'Concepción', 'San Francisco'], 'Belén': ['San Antonio', 'La Ribera', 'La Asunción'], 'Flores': ['San Joaquín', 'Barrantes', 'Llorente'] } }, 'Guanacaste': { lat: 10.4285, lng: -85.3968, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Liberia': ['Liberia', 'Cañas Dulces', 'Mayorga', 'Nacascolo', 'Curubandé'], 'Nicoya': ['Nicoya', 'Mansión', 'San Antonio', 'Quebrada Honda', 'Sámara', 'Nosara', 'Belén de Nosarita'], 'Santa Cruz': ['Santa Cruz', 'Bolsón', 'Veintisiete de Abril', 'Tempate', 'Cartagena', 'Cuajiniquil', 'Diriá', 'Cabo Velas', 'Tamarindo'], 'Bagaces': ['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'], 'Carrillo': ['Filadelfia', 'Palmira', 'Sardinal', 'Belén'], 'Cañas': ['Cañas', 'Palmira', 'San Miguel', 'Bebedero', 'Porozal'] } }, 'Puntarenas': { lat: 9.9763, lng: -84.8388, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Puntarenas': ['Puntarenas', 'Pitahaya', 'Chomes', 'Lepanto', 'Paquera', 'Manzanillo', 'Guacimal', 'Barranca', 'Monte Verde', 'Isla del Coco', 'Cóbano', 'Chacarita', 'Chira', 'Acapulco', 'El Roble', 'Arancibia'], 'Esparza': ['Espíritu Santo', 'San Juan Grande', 'Macacona', 'San Rafael', 'San Jerónimo', 'Caldera'], 'Buenos Aires': ['Buenos Aires', 'Volcán', 'Potrero Grande', 'Boruca', 'Pilas', 'Colinas', 'Chánguena', 'Biolley', 'Brunka'], 'Montes de Oro': ['Miramar', 'La Unión', 'San Isidro'], 'Osa': ['Puerto Cortés', 'Palmar', 'Sierpe', 'Bahía Ballena', 'Piedras Blancas', 'Bahía Drake'] } }, 'Limón': { lat: 9.9907, lng: -83.0355, incidentes: { urgente: 0, precaucion: 0, info: 0 }, cantones: { 'Limón': ['Limón', 'Valle La Estrella', 'Río Blanco', 'Matama'], 'Pococí': ['Guápiles', 'Jiménez', 'Rita', 'Roxana', 'Cariari', 'Colorado', 'La Colonia'], 'Siquirres': ['Siquirres', 'Pacuarito', 'Florida', 'Germania', 'Cairo', 'Alegría'], 'Talamanca': ['Bratsi', 'Sixaola', 'Cahuita', 'Telire'], 'Matina': ['Matina', 'Batán', 'Carrandi'], 'Guácimo': ['Guácimo', 'Mercedes', 'Pocora', 'Río Jiménez', 'Duacarí'] } } };
-
+        this.datosProvincias = {
+            'San José': {
+                lat: 9.9333, lng: -84.0833,
+                cantones: {
+                    'San José': { lat: 9.9325, lng: -84.0787, distritos: ['Carmen', 'Merced', 'Hospital', 'Catedral', 'Zapote', 'San Francisco', 'Uruca', 'Mata Redonda', 'Pavas', 'Hatillo', 'San Sebastián'] },
+                    'Escazú': { lat: 9.9208, lng: -84.1436, distritos: ['Escazú', 'San Antonio', 'San Rafael'] },
+                    'Desamparados': { lat: 9.8939, lng: -84.0673, distritos: ['Desamparados', 'San Miguel', 'San Juan de Dios', 'San Rafael Arriba', 'San Antonio', 'Frailes', 'Patarrá'] },
+                    'Puriscal': { lat: 9.8519, lng: -84.3142, distritos: ['Santiago', 'Mercedes Sur', 'Barbacoas', 'Grifo Alto', 'San Rafael'] },
+                    'Tarrazú': { lat: 9.6644, lng: -84.0292, distritos: ['San Marcos', 'San Lorenzo', 'San Carlos'] },
+                    'Aserrí': { lat: 9.8608, lng: -84.0922, distritos: ['Aserrí', 'Tarbaca', 'Vuelta de Jorco', 'San Gabriel', 'Legua', 'Monterrey'] },
+                    'Mora': { lat: 9.8806, lng: -84.2731, distritos: ['Colón', 'Guayabo', 'Tabarcia', 'Piedras Negras', 'Picagres'] },
+                    'Goicoechea': { lat: 9.9575, lng: -84.0450, distritos: ['Guadalupe', 'San Francisco', 'Calle Blancos', 'Mata de Plátano', 'Ipís', 'Rancho Redondo', 'Purral'] },
+                    'Santa Ana': { lat: 9.9328, lng: -84.1833, distritos: ['Santa Ana', 'Salitral', 'Pozos', 'Uruca', 'Piedades', 'Brasil'] },
+                    'Alajuelita': { lat: 9.9025, lng: -84.1033, distritos: ['Alajuelita', 'San Josecito', 'San Antonio', 'Concepción', 'San Felipe'] },
+                    'Vázquez de Coronado': { lat: 9.9881, lng: -84.0231, distritos: ['San Isidro', 'San Rafael', 'Dulce Nombre de Jesús', 'Patalillo', 'Cascajal'] },
+                    'Acosta': { lat: 9.7719, lng: -84.2403, distritos: ['San Ignacio', 'Guaitil', 'Palmichal', 'Cangrejal', 'Sabanillas'] },
+                    'Tibás': { lat: 9.9572, lng: -84.0822, distritos: ['San Juan', 'Cinco Esquinas', 'Anselmo Llorente', 'León XIII', 'Colima'] },
+                    'Moravia': { lat: 9.9658, lng: -84.0536, distritos: ['San Vicente', 'San Jerónimo', 'La Trinidad'] },
+                    'Montes de Oca': { lat: 9.9358, lng: -84.0494, distritos: ['San Pedro', 'Sabanilla', 'Mercedes', 'San Rafael'] },
+                    'Turrubares': { lat: 9.8353, lng: -84.4864, distritos: ['San Pablo', 'San Pedro', 'San Juan de Mata', 'San Luis'] },
+                    'Dota': { lat: 9.6808, lng: -83.9881, distritos: ['Santa María', 'Jardín', 'Copey'] },
+                    'Curridabat': { lat: 9.9142, lng: -84.0322, distritos: ['Curridabat', 'Granadilla', 'Sánchez', 'Tirrases'] },
+                    'Pérez Zeledón': { lat: 9.3739, lng: -83.7022, distritos: ['San Isidro de El General', 'El General', 'Daniel Flores', 'Rivas', 'San Pedro'] },
+                    'León Cortés': { lat: 9.7153, lng: -84.0792, distritos: ['San Pablo', 'San Andrés', 'Llano Bonito', 'San Isidro', 'Santa Cruz'] }
+                }
+            },
+            'Alajuela': {
+                lat: 10.0162, lng: -84.2163,
+                cantones: {
+                    'Alajuela': { lat: 10.0167, lng: -84.2167, distritos: ['Alajuela', 'San José', 'Carrizal', 'San Antonio', 'Guácima', 'San Isidro', 'Sabanilla', 'San Rafael', 'Río Segundo', 'Desamparados', 'Turrúcares', 'Tambor', 'Garita', 'Sarapiquí'] },
+                    'San Ramón': { lat: 10.0886, lng: -84.4706, distritos: ['San Ramón', 'Santiago', 'San Juan', 'Piedades Norte', 'Piedades Sur', 'San Rafael', 'San Isidro', 'Ángeles', 'Alfaro', 'Volio', 'Concepción'] },
+                    'Grecia': { lat: 10.0719, lng: -84.3117, distritos: ['Grecia', 'San Isidro', 'San José', 'San Roque', 'Tacares', 'Puente de Piedra', 'Bolívar'] },
+                    'San Mateo': { lat: 9.9589, lng: -84.5208, distritos: ['San Mateo', 'Desmonte', 'Jesús María', 'Labrador'] },
+                    'Atenas': { lat: 9.9786, lng: -84.3800, distritos: ['Atenas', 'Jesús', 'Mercedes', 'San Isidro', 'Concepción', 'San José', 'Santa Eulalia', 'Escobal'] },
+                    'Naranjo': { lat: 10.0967, lng: -84.3781, distritos: ['Naranjo', 'San Miguel', 'San José', 'Cirrí Sur', 'San Jerónimo', 'San Juan', 'El Rosario', 'Palmitos'] },
+                    'Palmares': { lat: 10.0592, lng: -84.4294, distritos: ['Palmares', 'Zaragoza', 'Buenos Aires', 'Santiago', 'Candelaria', 'Esquipulas', 'La Granja'] },
+                    'Poás': { lat: 10.1219, lng: -84.2503, distritos: ['San Pedro', 'San Juan', 'San Rafael', 'Carrillos', 'Sabana Redonda'] },
+                    'Orotina': { lat: 9.9114, lng: -84.5256, distritos: ['Orotina', 'El Mastate', 'Hacienda Vieja', 'Coyolar', 'La Ceiba'] },
+                    'San Carlos': { lat: 10.4686, lng: -84.5122, distritos: ['Quesada', 'Florencia', 'Buenavista', 'Aguas Zarcas', 'Venecia', 'Pital', 'La Fortuna', 'La Tigra', 'La Palmera', 'Venado', 'Cutris', 'Monterrey', 'Pocosol'] },
+                    'Zarcero': { lat: 10.1867, lng: -84.3942, distritos: ['Zarcero', 'Laguna', 'Tapesco', 'Guadalupe', 'Palmira', 'Zapote', 'Brisas'] },
+                    'Sarchí': { lat: 10.0931, lng: -84.3411, distritos: ['Sarchí Norte', 'Sarchí Sur', 'Toro Amarillo', 'San Pedro', 'Rodríguez'] },
+                    'Upala': { lat: 10.8981, lng: -85.0161, distritos: ['Upala', 'Aguas Claras', 'San José (Pizote)', 'Bijagua', 'Delicias', 'Dos Ríos', 'Yolillal', 'Canalete'] },
+                    'Los Chiles': { lat: 11.0333, lng: -84.7167, distritos: ['Los Chiles', 'Caño Negro', 'El Amparo', 'San Jorge'] },
+                    'Guatuso': { lat: 10.7167, lng: -84.8000, distritos: ['San Rafael', 'Buenavista', 'Cote', 'Katira'] },
+                    'Río Cuarto': { lat: 10.3667, lng: -84.2167, distritos: ['Río Cuarto', 'Santa Rita', 'Santa Isabel'] }
+                }
+            },
+            'Cartago': {
+                lat: 9.8634, lng: -83.9194,
+                cantones: {
+                    'Cartago': { lat: 9.8667, lng: -83.9167, distritos: ['Oriental', 'Occidental', 'Carmen', 'San Nicolás', 'Aguacaliente (San Francisco)', 'Guadalupe (Arenilla)', 'Corralillo', 'Tierra Blanca', 'Dulce Nombre', 'Llano Grande', 'Quebradilla'] },
+                    'Paraíso': { lat: 9.8417, lng: -83.8667, distritos: ['Paraíso', 'Santiago', 'Orosi', 'Cachí', 'Llanos de Santa Lucía'] },
+                    'La Unión': { lat: 9.9167, lng: -84.0000, distritos: ['Tres Ríos', 'San Diego', 'San Juan', 'San Rafael', 'Concepción', 'Dulce Nombre', 'San Ramón', 'Río Azul'] },
+                    'Jiménez': { lat: 9.8167, lng: -83.7333, distritos: ['Juan Viñas', 'Tucurrique', 'Pejibaye'] },
+                    'Turrialba': { lat: 9.9000, lng: -83.6833, distritos: ['Turrialba', 'La Suiza', 'Peralta', 'Santa Cruz', 'Santa Teresita', 'Pavones', 'Tuis', 'Tayutic', 'Santa Rosa', 'Tres Equis', 'La Isabel', 'Chirripó'] },
+                    'Alvarado': { lat: 9.9000, lng: -83.8000, distritos: ['Pacayas', 'Cervantes', 'Capellades'] },
+                    'Oreamuno': { lat: 9.9167, lng: -83.8500, distritos: ['San Rafael', 'Cot', 'Potrero Cerrado', 'Cipreses', 'Santa Rosa'] },
+                    'El Guarco': { lat: 9.8167, lng: -83.9333, distritos: ['El Tejar', 'San Isidro', 'Tobosi', 'Patio de Agua'] }
+                }
+            },
+            'Heredia': {
+                lat: 10.0024, lng: -84.1165,
+                cantones: {
+                    'Heredia': { lat: 9.9983, lng: -84.1189, distritos: ['Heredia', 'Mercedes', 'San Francisco', 'Ulloa', 'Varablanca'] },
+                    'Barva': { lat: 10.0194, lng: -84.1283, distritos: ['Barva', 'San Pedro', 'San Pablo', 'San Roque', 'Santa Lucía', 'San José de la Montaña'] },
+                    'Santo Domingo': { lat: 9.9806, lng: -84.0933, distritos: ['Santo Domingo', 'San Vicente', 'San Miguel', 'Paracito', 'Santo Tomás', 'Santa Rosa', 'Tures', 'Pará'] },
+                    'Santa Bárbara': { lat: 10.0400, lng: -84.1611, distritos: ['Santa Bárbara', 'San Pedro', 'San Juan', 'Jesús', 'Santo Domingo', 'Purabá'] },
+                    'San Rafael': { lat: 10.0503, lng: -84.0983, distritos: ['San Rafael', 'San Josecito', 'Santiago', 'Ángeles', 'Concepción'] },
+                    'San Isidro': { lat: 10.0383, lng: -84.0456, distritos: ['San Isidro', 'San José', 'Concepción', 'San Francisco'] },
+                    'Belén': { lat: 9.9767, lng: -84.1956, distritos: ['San Antonio', 'La Ribera', 'La Asunción'] },
+                    'Flores': { lat: 9.9883, lng: -84.1656, distritos: ['San Joaquín', 'Barrantes', 'Llorente'] },
+                    'San Pablo': { lat: 9.9822, lng: -84.0811, distritos: ['San Pablo', 'Rincón de Sabanilla'] },
+                    'Sarapiquí': { lat: 10.4600, lng: -84.0089, distritos: ['Puerto Viejo', 'La Virgen', 'Horquetas', 'Llanuras del Gaspar', 'Cureña'] }
+                }
+            },
+            'Guanacaste': {
+                lat: 10.4285, lng: -85.3968,
+                cantones: {
+                    'Liberia': { lat: 10.6333, lng: -85.4333, distritos: ['Liberia', 'Cañas Dulces', 'Mayorga', 'Nacascolo', 'Curubandé'] },
+                    'Nicoya': { lat: 10.1458, lng: -85.4519, distritos: ['Nicoya', 'Mansión', 'San Antonio', 'Quebrada Honda', 'Sámara', 'Nosara', 'Belén de Nosarita'] },
+                    'Santa Cruz': { lat: 10.2597, lng: -85.6853, distritos: ['Santa Cruz', 'Bolsón', 'Veintisiete de Abril', 'Tempate', 'Cartagena', 'Cuajiniquil', 'Diriá', 'Cabo Velas', 'Tamarindo'] },
+                    'Bagaces': { lat: 10.5256, lng: -85.2483, distritos: ['Bagaces', 'La Fortuna', 'Mogote', 'Río Naranjo'] },
+                    'Carrillo': { lat: 10.4686, lng: -85.5683, distritos: ['Filadelfia', 'Palmira', 'Sardinal', 'Belén'] },
+                    'Cañas': { lat: 10.4319, lng: -85.0981, distritos: ['Cañas', 'Palmira', 'San Miguel', 'Bebedero', 'Porozal'] },
+                    'Abangares': { lat: 10.2817, lng: -84.9653, distritos: ['Las Juntas', 'Sierra', 'San Juan', 'Colorado'] },
+                    'Tilarán': { lat: 10.4681, lng: -84.9703, distritos: ['Tilarán', 'Quebrada Grande', 'Tronadora', 'Santa Rosa', 'Líbano', 'Tierras Morenas', 'Arenal'] },
+                    'Nandayure': { lat: 9.9833, lng: -85.3500, distritos: ['Carmona', 'Santa Rita', 'Zapotal', 'San Pablo', 'Porvenir', 'Bejuco'] },
+                    'La Cruz': { lat: 11.0717, lng: -85.6311, distritos: ['La Cruz', 'Santa Cecilia', 'La Garita', 'Santa Elena'] },
+                    'Hojancha': { lat: 10.0583, lng: -85.4211, distritos: ['Hojancha', 'Monte Romo', 'Puerto Carrillo', 'Huacas', 'Matambú'] }
+                }
+            },
+            'Puntarenas': {
+                lat: 9.9763, lng: -84.8388,
+                cantones: {
+                    'Puntarenas': { lat: 9.9769, lng: -84.8322, distritos: ['Puntarenas', 'Pitahaya', 'Chomes', 'Lepanto', 'Paquera', 'Manzanillo', 'Guacimal', 'Barranca', 'Monte Verde', 'Isla del Coco', 'Cóbano', 'Chacarita', 'Chira', 'Acapulco', 'El Roble', 'Arancibia'] },
+                    'Esparza': { lat: 9.9925, lng: -84.6644, distritos: ['Espíritu Santo', 'San Juan Grande', 'Macacona', 'San Rafael', 'San Jerónimo', 'Caldera'] },
+                    'Buenos Aires': { lat: 9.1722, lng: -83.3347, distritos: ['Buenos Aires', 'Volcán', 'Potrero Grande', 'Boruca', 'Pilas', 'Colinas', 'Chánguena', 'Biolley', 'Brunka'] },
+                    'Montes de Oro': { lat: 10.1167, lng: -84.7167, distritos: ['Miramar', 'La Unión', 'San Isidro'] },
+                    'Osa': { lat: 8.9583, lng: -83.4564, distritos: ['Puerto Cortés', 'Palmar', 'Sierpe', 'Bahía Ballena', 'Piedras Blancas', 'Bahía Drake'] },
+                    'Quepos': { lat: 9.4308, lng: -84.1611, distritos: ['Quepos', 'Savegre', 'Naranjito'] },
+                    'Golfito': { lat: 8.6381, lng: -83.1658, distritos: ['Golfito', 'Puerto Jiménez', 'Guaycará', 'Pavón'] },
+                    'Coto Brus': { lat: 8.9667, lng: -82.9667, distritos: ['San Vito', 'Sabalito', 'Aguabuena', 'Limóncito', 'Pittier'] },
+                    'Parrita': { lat: 9.5186, lng: -84.3217, distritos: ['Parrita'] },
+                    'Corredores': { lat: 8.7833, lng: -82.9500, distritos: ['Corredor', 'La Cuesta', 'Canoas', 'Laurel'] },
+                    'Garabito': { lat: 9.6167, lng: -84.6333, distritos: ['Jacó', 'Tárcoles'] }
+                }
+            },
+            'Limón': {
+                lat: 9.9907, lng: -83.0355,
+                cantones: {
+                    'Limón': { lat: 9.9889, lng: -83.0317, distritos: ['Limón', 'Valle La Estrella', 'Río Blanco', 'Matama'] },
+                    'Pococí': { lat: 10.4667, lng: -83.6500, distritos: ['Guápiles', 'Jiménez', 'Rita', 'Roxana', 'Cariari', 'Colorado', 'La Colonia'] },
+                    'Siquirres': { lat: 10.0986, lng: -83.5075, distritos: ['Siquirres', 'Pacuarito', 'Florida', 'Germania', 'Cairo', 'Alegría'] },
+                    'Talamanca': { lat: 9.6333, lng: -82.8500, distritos: ['Bratsi', 'Sixaola', 'Cahuita', 'Telire'] },
+                    'Matina': { lat: 10.0833, lng: -83.2833, distritos: ['Matina', 'Batán', 'Carrandi'] },
+                    'Guácimo': { lat: 10.2167, lng: -83.6833, distritos: ['Guácimo', 'Mercedes', 'Pocora', 'Río Jiménez', 'Duacarí'] }
+                }
+            }
+        };
+        //... el resto de tu constructor ...
         this.BASE_URL = 'http://localhost/Proyecto/';
         this.dom = {
             botonLogin: document.getElementById('botonLogin'),
@@ -27,7 +145,7 @@ class ViasSegurasApp {
         };
         this.inicializar();
     }
-
+    //... resto de la clase
     inicializar() {
         this.inicializarMapa();
         this.configurarEventos();
@@ -36,6 +154,7 @@ class ViasSegurasApp {
         this.configurarModales();
         this.mostrarSeccion('inicio');
         this.cargarDatosIniciales();
+        this.cargarEstadisticas();
     }
     
     configurarEventos() {
@@ -55,13 +174,11 @@ class ViasSegurasApp {
             });
         });
         
-        // Se mantienen los listeners para los filtros de prioridad
         document.querySelectorAll('.filtro-tipo').forEach(checkbox => {
             checkbox.addEventListener('change', (e) => this.handleFiltroTipoChange(e));
         });
     }
 
-    // FUNCIÓN DE REPORTE (TOMADA DE LA VERSIÓN SIMPLE Y FUNCIONAL)
     async enviarReporte() {
         const descripcion = document.getElementById('textoReporte').value;
         const prioridad = document.getElementById('prioridadReporte').value;
@@ -76,7 +193,6 @@ class ViasSegurasApp {
             return;
         }
 
-        // VALIDACIÓN SIMPLE Y FUNCIONAL (de scripts copy.js)
         if (!descripcion.trim() || !provincia || !canton) {
             this.mostrarNotificacion('Por favor, completa la descripción, provincia y cantón.', 'warning');
             return;
@@ -88,24 +204,39 @@ class ViasSegurasApp {
         formData.append('provincia', provincia);
         formData.append('canton', canton);
         formData.append('distrito', distrito);
-        formData.append('id_usuario', this.usuario.id); // Aseguramos enviar el ID
         if (imagenInput.files.length > 0) formData.append('imagen', imagenInput.files[0]);
         
-        // Se mantiene la lógica de añadir coordenadas de la provincia
-        const datosProvincia = this.datosProvincias[provincia];
-        if (datosProvincia) {
-            formData.append('latitud', datosProvincia.lat);
-            formData.append('longitud', datosProvincia.lng);
+        let lat, lng;
+        if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]) {
+            lat = this.datosProvincias[provincia].cantones[canton].lat;
+            lng = this.datosProvincias[provincia].cantones[canton].lng;
+        } else if (provincia && this.datosProvincias[provincia]) {
+            lat = this.datosProvincias[provincia].lat;
+            lng = this.datosProvincias[provincia].lng;
+        }
+
+        if (lat && lng) {
+            formData.append('latitud', lat);
+            formData.append('longitud', lng);
         }
 
         try {
             const response = await fetch(this.BASE_URL + 'create_report.php', { method: 'POST', body: formData });
             const result = await response.json();
+            
             if (response.ok && result.success) {
                 this.mostrarNotificacion(result.message, 'success');
                 this.limpiarFormulario();
-                // Se llama a la función de carga de la estructura avanzada
+                
                 this.cargarDatosIniciales();
+                this.cargarEstadisticas();
+
+                if (result.nuevos_puntos !== undefined) {
+                    this.usuario.puntos_totales = result.nuevos_puntos;
+                    localStorage.setItem('usuarioViasSeguras', JSON.stringify(this.usuario));
+                    this.actualizarUIUsuario();
+                }
+
             } else {
                 this.mostrarNotificacion('Error: ' + (result.message || 'No se pudo enviar.'), 'danger');
             }
@@ -124,7 +255,6 @@ class ViasSegurasApp {
         this.cambiarProvincia({ target: { value: '' } });
     }
     
-    // ESTRUCTURA AVANZADA DE RENDERIZADO Y FILTRADO (de scripts.js)
     async cargarDatosIniciales() {
         const feedContainer = document.getElementById('feedReportes');
         if (feedContainer) feedContainer.innerHTML = '<p class="text-center texto-muted">Cargando reportes...</p>';
@@ -158,6 +288,56 @@ class ViasSegurasApp {
 
         this.renderizarFeed(reportesFiltrados);
         this.actualizarMapaConReportes(reportesFiltrados);
+
+        this.addLikeButtonListeners();
+    }
+
+    addLikeButtonListeners() {
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            const handleLikeClick = async (event) => {
+                event.stopPropagation();
+                const reportId = button.dataset.reportId;
+                button.disabled = true;
+
+                try {
+                    const response = await this.voteForReport(reportId);
+                    if (response.success) {
+                        const countSpan = button.querySelector('.like-count');
+                        const currentLikes = parseInt(countSpan.textContent, 10);
+                        countSpan.textContent = currentLikes + 1;
+                        
+                        button.classList.remove('btn-outline-light');
+                        button.classList.add('btn-primary');
+                    } else {
+                        button.classList.remove('btn-outline-light');
+                        button.classList.add('btn-primary');
+                    }
+                } catch (error) {
+                    console.error('Error al votar:', error);
+                    this.mostrarNotificacion('No se pudo registrar tu voto. Revisa si has iniciado sesión.', 'danger');
+                    button.disabled = false;
+                }
+            };
+
+            button.removeEventListener('click', button.handleLikeClick);
+            button.addEventListener('click', handleLikeClick);
+            button.handleLikeClick = handleLikeClick;
+        });
+    }
+
+    async voteForReport(reportId) {
+        const response = await fetch(this.BASE_URL + 'vote_report.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ report_id: reportId })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error en la solicitud de voto.');
+        }
+        return await response.json();
     }
     
     renderizarFeed(reportes) {
@@ -169,7 +349,7 @@ class ViasSegurasApp {
             return;
         }
         reportes.forEach(report => {
-            const reportHTML = `<div class="tarjeta-info mb-3"><div class="d-flex align-items-start mb-2"><div class="avatar-usuario me-3"><i class="fas fa-user-circle"></i></div><div class="flex-grow-1"><h6 class="mb-0">${report.usuario_nombre} ${report.usuario_apellido}</h6><small class="texto-muted">${new Date(report.created_at).toLocaleString()} &middot; ${report.provincia}, ${report.canton}</small></div></div><p class="mb-2">${report.descripcion}</p>${report.imagen ? `<img src="${this.BASE_URL}${report.imagen}" class="img-fluid rounded mb-2" alt="Imagen del reporte">` : ''}<div class="d-flex justify-content-between align-items-center"><div><span class="badge-filtro ${report.prioridad.toLowerCase()}">${report.prioridad}</span><span class="badge bg-secondary">${report.tipo_incidente_nombre || 'General'}</span></div></div></div>`;
+            const reportHTML = `<div class="tarjeta-info mb-3"><div class="d-flex align-items-start mb-2"><div class="avatar-usuario me-3"><i class="fas fa-user-circle"></i></div><div class="flex-grow-1"><h6 class="mb-0">${report.usuario_nombre} ${report.usuario_apellido}</h6><small class="texto-muted">${new Date(report.created_at).toLocaleString()} &middot; ${report.provincia}, ${report.canton}</small></div></div><p class="mb-2">${report.descripcion}</p>${report.imagen ? `<img src="${this.BASE_URL}uploads/${report.imagen}" class="img-fluid rounded mb-2" alt="Imagen del reporte">` : ''}<div class="d-flex justify-content-between align-items-center"><div><span class="badge-filtro ${report.prioridad.toLowerCase()}">${report.prioridad}</span><span class="badge bg-secondary">${report.tipo_incidente_nombre || 'General'}</span></div><button class="btn btn-sm btn-outline-light like-button" data-report-id="${report.id}"><i class="fas fa-thumbs-up me-1"></i> <span class="like-count">${report.total_likes}</span></button></div></div>`;
             feedContainer.insertAdjacentHTML('beforeend', reportHTML);
         });
     }
@@ -203,7 +383,7 @@ class ViasSegurasApp {
     handleProvinciaClick(provincia) {
         this.provinciaSeleccionada = this.provinciaSeleccionada === provincia ? null : provincia;
         this.aplicarFiltrosYRenderizar();
-        this.actualizarPanelProvincias(); // Re-render para actualizar la clase 'activa'
+        this.actualizarPanelProvincias();
     }
     
     handleFiltroTipoChange(evento) {
@@ -215,39 +395,64 @@ class ViasSegurasApp {
     
     actualizarMapaConReportes(reportes) {
         if (!this.mapa) return;
+
         this.marcadoresMapa.forEach(marcador => this.mapa.removeLayer(marcador));
         this.marcadoresMapa = [];
-        let latLngs = [];
+
+        const latLngs = [];
+
         reportes.forEach(reporte => {
-            if (reporte.latitud && reporte.longitud && parseFloat(reporte.latitud) !== 0) {
-                const lat = parseFloat(reporte.latitud);
-                const lng = parseFloat(reporte.longitud);
+            const lat = parseFloat(reporte.latitud);
+            const lng = parseFloat(reporte.longitud);
+
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
                 const latLng = [lat, lng];
-                const iconColor = reporte.prioridad.toLowerCase() === 'urgente' ? 'red' : reporte.prioridad.toLowerCase() === 'precaucion' ? 'orange' : 'blue';
+
+                const prioridadLower = reporte.prioridad.toLowerCase();
+                let iconColor = 'blue';
+                if (prioridadLower === 'urgente') {
+                    iconColor = 'red';
+                } else if (prioridadLower === 'precaucion') {
+                    iconColor = 'orange';
+                }
+
                 const customIcon = L.icon({
                     iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${iconColor}.png`,
                     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
                 });
+
                 const marcador = L.marker(latLng, { icon: customIcon })
                     .addTo(this.mapa)
-                    .bindPopup(`<b>${reporte.tipo_incidente_nombre || 'Reporte'}</b><br><small>${reporte.provincia}, ${reporte.canton}</small><hr style="margin: 5px 0;">${reporte.descripcion.substring(0, 70)}...`);
+                    .bindPopup(`
+                        <b>${reporte.tipo_incidente_nombre || 'Reporte'}</b><br>
+                        <small>${reporte.provincia}, ${reporte.canton}</small>
+                        <hr style="margin: 5px 0;">
+                        ${reporte.descripcion.substring(0, 100)}...
+                    `);
+                
                 this.marcadoresMapa.push(marcador);
                 latLngs.push(latLng);
             }
         });
+
         if (latLngs.length > 0) {
-            this.mapa.fitBounds(latLngs, { padding: [50, 50], maxZoom: 14 });
+            this.mapa.fitBounds(latLngs, { padding: [50, 50], maxZoom: 15 });
         } else if (!this.provinciaSeleccionada) {
             this.mapa.setView([9.7489, -83.7534], 8);
         }
-        this.mapa.invalidateSize();
     }
     
     inicializarMapa() {
         if (document.getElementById('mapaLeaflet')) {
             this.mapa = L.map('mapaLeaflet').setView([9.7489, -83.7534], 8);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(this.mapa);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(this.mapa);
         }
     }
 
@@ -264,7 +469,7 @@ class ViasSegurasApp {
                 seccionActiva.classList.remove('d-none');
             }
             if (seccionId === 'mapa' && this.mapa) {
-                this.mapa.invalidateSize();
+                setTimeout(() => this.mapa.invalidateSize(), 10);
             }
         }
     }
@@ -296,7 +501,8 @@ class ViasSegurasApp {
         selectDistrito.innerHTML = '<option value="">Distrito</option>';
         selectCanton.disabled = true;
         selectDistrito.disabled = true;
-        if (provincia) {
+        
+        if (provincia && this.datosProvincias[provincia]) {
             selectCanton.disabled = false;
             Object.keys(this.datosProvincias[provincia].cantones).forEach(canton => {
                 const option = document.createElement('option');
@@ -306,16 +512,22 @@ class ViasSegurasApp {
             });
         }
     }
-
+    
+    // ==================== INICIO DE LA CORRECCIÓN ====================
+    // Se completa la función para que cargue los distritos
     cambiarCanton(evento) {
         const provincia = document.getElementById('selectProvincia').value;
         const canton = evento.target.value;
         const selectDistrito = document.getElementById('selectDistrito');
-        selectDistrito.innerHTML = '<option value="">Distrito</option>';
+        selectDistrito.innerHTML = '<option value="">Distrito (Opcional)</option>'; // Se actualiza el texto
         selectDistrito.disabled = true;
-        if (provincia && canton && this.datosProvincias[provincia].cantones[canton]) {
+
+        // Verificar que provincia, cantón y la lista de distritos existan
+        if (provincia && canton && this.datosProvincias[provincia]?.cantones[canton]?.distritos) {
             selectDistrito.disabled = false;
-            this.datosProvincias[provincia].cantones[canton].forEach(distrito => {
+            const distritos = this.datosProvincias[provincia].cantones[canton].distritos;
+            
+            distritos.forEach(distrito => {
                 const option = document.createElement('option');
                 option.value = distrito;
                 option.textContent = distrito;
@@ -323,6 +535,7 @@ class ViasSegurasApp {
             });
         }
     }
+    // ==================== FIN DE LA CORRECCIÓN ====================
     
     previsualizarImagen(evento) {
         const archivo = evento.target.files[0];
@@ -408,17 +621,72 @@ class ViasSegurasApp {
     }
 
     actualizarUIUsuario() {
+        const puntosPerfil = document.getElementById('puntosUsuario');
+        const rangoPerfil = document.getElementById('rangoUsuario');
+
         if (this.usuario) {
             this.dom.botonLogin.classList.add('d-none');
             this.dom.menuUsuario.classList.remove('d-none');
             this.dom.nombreUsuario.textContent = this.usuario.nombre;
             document.getElementById('nombrePerfil').textContent = `${this.usuario.nombre} ${this.usuario.apellido}`;
             document.getElementById('emailPerfil').textContent = this.usuario.email;
+
+            if (puntosPerfil) {
+                puntosPerfil.textContent = this.usuario.puntos_totales;
+            }
+            if (rangoPerfil) {
+                rangoPerfil.textContent = this.usuario.nombre_rango;
+            }
+
         } else {
             this.dom.botonLogin.classList.remove('d-none');
             this.dom.menuUsuario.classList.add('d-none');
             document.getElementById('nombrePerfil').textContent = 'Invitado';
             document.getElementById('emailPerfil').textContent = 'Inicia sesión para ver tu perfil';
+            
+            if (puntosPerfil) {
+                puntosPerfil.textContent = '0';
+            }
+            if (rangoPerfil) {
+                rangoPerfil.textContent = 'N/A';
+            }
+        }
+    }
+
+    async cargarEstadisticas() {
+        try {
+            const response = await fetch(this.BASE_URL + 'get_stats.php?t=' + new Date().getTime());
+            
+            if (!response.ok) {
+                throw new Error('No se pudieron cargar las estadísticas.');
+            }
+            const data = await response.json();
+            if (data.success) {
+                this.actualizarPanelInformes(data.stats);
+            }
+        } catch (error) {
+            console.error('Error al cargar estadísticas:', error);
+        }
+    }
+
+    actualizarPanelInformes(stats) {
+        document.getElementById('stats-urgente').textContent = stats.por_prioridad.Urgente || 0;
+        document.getElementById('stats-precaucion').textContent = stats.por_prioridad.Precaucion || 0;
+        document.getElementById('stats-info').textContent = stats.por_prioridad.Informacion || 0;
+
+        const zonasContainer = document.getElementById('stats-zonas-incidencia');
+        zonasContainer.innerHTML = '';
+        
+        const topProvincias = stats.por_provincia.slice(0, 3);
+        
+        if (topProvincias.length > 0) {
+            topProvincias.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `${item.provincia}: <span class="badge bg-primary">${item.total}</span>`;
+                zonasContainer.appendChild(li);
+            });
+        } else {
+            zonasContainer.innerHTML = '<li>No hay datos de incidencia.</li>';
         }
     }
 

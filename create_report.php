@@ -3,8 +3,20 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+require_once 'conexion.php'; // Este archivo ya maneja la sesión.
+
+$coordenadas_provincias = [
+    'San José' => ['lat' => 9.9333, 'lng' => -84.0833],
+    'Alajuela' => ['lat' => 10.0162, 'lng' => -84.2163],
+    'Cartago' => ['lat' => 9.8634, 'lng' => -83.9194],
+    'Heredia' => ['lat' => 10.0024, 'lng' => -84.1165],
+    'Guanacaste' => ['lat' => 10.4285, 'lng' => -85.3968],
+    'Puntarenas' => ['lat' => 9.9763, 'lng' => -84.8388],
+    'Limón' => ['lat' => 9.9907, 'lng' => -83.0355]
+];
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *'); // Ajustar para producción
+header('Access-Control-Allow-Origin: *'); 
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
@@ -13,83 +25,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-require_once 'conexion.php';
-
-// --- Verificación de Seguridad: El usuario DEBE haber iniciado sesión ---
+// Verificación de Seguridad
 if (!isset($_SESSION['user_id'])) {
-    http_response_code(401); // No autorizado
+    http_response_code(401); 
     echo json_encode(['success' => false, 'message' => 'Debes iniciar sesión para poder reportar.']);
     exit();
 }
 
-// --- Validación de Datos del Formulario ---
+// Validación de Datos
 $required_fields = ['descripcion', 'prioridad', 'provincia', 'canton'];
 foreach ($required_fields as $field) {
     if (empty($_POST[$field])) {
-        http_response_code(400); // Bad Request
+        http_response_code(400); 
         echo json_encode(['success' => false, 'message' => "El campo '$field' es obligatorio."]);
         exit();
     }
 }
 
-// --- Recopilación y Saneamiento de Datos ---
+// Recopilación de Datos
 $id_usuario = $_SESSION['user_id'];
 $descripcion = trim($_POST['descripcion']);
 $prioridad = trim($_POST['prioridad']);
 $provincia = trim($_POST['provincia']);
 $canton = trim($_POST['canton']);
-// El distrito es opcional, así que usamos el operador de fusión de null
 $distrito = !empty($_POST['distrito']) ? trim($_POST['distrito']) : null;
-// El tipo de incidente lo dejaremos como un valor fijo por ahora, ya que no está en el nuevo formulario.
-// En una futura mejora, se puede añadir un selector para esto.
-$id_tipo_incidente = 1; // Asumimos un tipo "Reporte General" o similar. ¡Ajustar si es necesario!
+$id_tipo_incidente = 6; // Por defecto "Otro"
 
+// ==================== INICIO DE LA CORRECCIÓN #1 ====================
+// Recibimos la latitud y longitud que envía el frontend.
+$latitud = !empty($_POST['latitud']) ? (float)$_POST['latitud'] : null;
+$longitud = !empty($_POST['longitud']) ? (float)$_POST['longitud'] : null;
+// ==================== FIN DE LA CORRECCIÓN #1 ====================
+
+// Manejo de Imagen
 $url_imagen = null;
-
-// --- Manejo de la Subida de Imagen ---
 if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] == 0) {
     $upload_dir = 'uploads/';
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
-    
     $file_name = uniqid() . '-' . basename($_FILES['imagen']['name']);
     $target_file = $upload_dir . $file_name;
-
-    // Mover el archivo subido al directorio de uploads
     if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
-        // Guardamos la ruta relativa para almacenarla en la BD
-        $url_imagen = $target_file;
+        $url_imagen = $file_name;
     }
 }
 
-// --- Inserción en la Base de Datos ---
+define('PUNTOS_POR_REPORTE', 10);
+
 try {
-    // Asignamos un estado por defecto. Asumimos que '1' es "Recibido" o "Nuevo"
-    $id_estado = 1; 
+    $conn->begin_transaction();
 
-    $sql = "INSERT INTO reportes (id_usuario, id_tipo_incidente, id_estado, descripcion, prioridad, provincia, canton, distrito, imagen) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
+    // 1. Insertar el reporte
+    $id_estado = 1; // "Recibido"
+    // ==================== INICIO DE LA CORRECCIÓN #2 ====================
+    // Añadimos las columnas latitud y longitud a la consulta INSERT.
+    $sql_reporte = "INSERT INTO reportes (id_usuario, id_tipo_incidente, id_estado, descripcion, prioridad, provincia, canton, distrito, imagen, latitud, longitud) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt_reporte = $conn->prepare($sql_reporte);
+    // Añadimos los tipos ('dd' para double/float) y las variables de latitud y longitud.
+    $stmt_reporte->bind_param("iiissssssdd", $id_usuario, $id_tipo_incidente, $id_estado, $descripcion, $prioridad, $provincia, $canton, $distrito, $url_imagen, $latitud, $longitud);
+    // ==================== FIN DE LA CORRECCIÓN #2 ====================
     
-    if (!$stmt) {
-        throw new Exception('Error al preparar la consulta: ' . $conn->error);
-    }
-    
-    // El tipo de dato ahora es 'iiissssss' (integer, integer, integer, string...)
-    $stmt->bind_param("iiissssss", $id_usuario, $id_tipo_incidente, $id_estado, $descripcion, $prioridad, $provincia, $canton, $distrito, $url_imagen);
+    $stmt_reporte->execute();
+    $nuevo_reporte_id = $conn->insert_id;
+    $stmt_reporte->close();
 
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => '¡Reporte enviado con éxito!']);
-    } else {
-        throw new Exception('Error al guardar el reporte en la base de datos.');
-    }
-    $stmt->close();
+    // 2. Actualizar puntos del usuario
+    $puntos_a_sumar = PUNTOS_POR_REPORTE;
+    $sql_puntos_usuario = "UPDATE usuarios SET puntos_totales = puntos_totales + ? WHERE id = ?";
+    $stmt_puntos_usuario = $conn->prepare($sql_puntos_usuario);
+    $stmt_puntos_usuario->bind_param("ii", $puntos_a_sumar, $id_usuario);
+    $stmt_puntos_usuario->execute();
+    $stmt_puntos_usuario->close();
+
+    // 3. Registrar en historial de puntos
+    $razon_puntos = "Creación de nuevo reporte";
+    $sql_historial = "INSERT INTO historial_puntos (id_usuario, puntos_cambio, razon, referencia_id) VALUES (?, ?, ?, ?)";
+    $stmt_historial = $conn->prepare($sql_historial);
+    $stmt_historial->bind_param("iisi", $id_usuario, $puntos_a_sumar, $razon_puntos, $nuevo_reporte_id);
+    $stmt_historial->execute();
+    $stmt_historial->close();
+    
+    // 4. Obtener el nuevo total de puntos para devolverlo al frontend
+    $sql_get_puntos = "SELECT puntos_totales FROM usuarios WHERE id = ?";
+    $stmt_get_puntos = $conn->prepare($sql_get_puntos);
+    $stmt_get_puntos->bind_param("i", $id_usuario);
+    $stmt_get_puntos->execute();
+    $result_puntos = $stmt_get_puntos->get_result();
+    $nuevos_puntos = $result_puntos->fetch_assoc()['puntos_totales'];
+    $stmt_get_puntos->close();
+    
+    $conn->commit();
+    
+    echo json_encode([
+        'success' => true, 
+        'message' => '¡Reporte enviado! Has ganado ' . PUNTOS_POR_REPORTE . ' puntos.',
+        'nuevos_puntos' => $nuevos_puntos
+    ]);
 
 } catch (Exception $e) {
+    $conn->rollback();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error del servidor: ' . $e->getMessage()]);
 }
 
 $conn->close();
+?>
